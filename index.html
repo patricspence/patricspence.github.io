@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Patric R. Spence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Simple, clean font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --text-color: #111827;
+      --accent-color: #1d4ed8;
+      --accent-color-hover: #1e40af;
+      --button-text-color: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Roboto", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .page {
+      padding: 24px;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 600;
+    }
+
+    header p {
+      margin: 8px 0 0 0;
+      font-size: 0.95rem;
+      color: #4b5563;
+    }
+
+    .button-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .btn-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 6px;
+      border: none;
+      background-color: var(--accent-color);
+      color: var(--button-text-color);
+      font-size: 0.98rem;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+      text-align: center;
+      white-space: normal;
+    }
+
+    .btn-link:hover,
+    .btn-link:focus-visible {
+      background-color: var(--accent-color-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.2);
+    }
+
+    .btn-link:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    footer {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 1.6rem;
+      }
+      .page {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>Patric R. Spence</h1>
+      <p>Professor of Communication · Human–Machine Communication and Crisis and Risk Communication</p>
+    </header>
+
+    <main>
+      <div class="button-list">
+        <a class="btn-link" href="https://scholar.google.com/citations?user=75AWeKoAAAAJ&hl=en" target="_blank" rel="noopener noreferrer">
+          Publications on Google Scholar
+        </a>
+        <a class="btn-link" href="https://orcid.org/0000-0002-1793-6871" target="_blank" rel="noopener noreferrer">
+          ORCID Researcher ID
+        </a>
+        <a class="btn-link" href="https://www.sciencedirect.com/author/15847046400/patric-r-spence" target="_blank" rel="noopener noreferrer">
+          ScienceDirect Author Page
+        </a>
+        <a class="btn-link" href="https://topscinet.com/scientist_profile/Spence,%20Patric%20R./2004/?stype=single_year" target="_blank" rel="noopener noreferrer">
+          TopSciNet Profile
+        </a>
+        <a class="btn-link" href="https://combotlabs.org/" target="_blank" rel="noopener noreferrer">
+          ComBot Labs Website
+        </a>
+      </div>
+    </main>
+
+    <footer>
+      &copy; <span id="year"></span> Patric R. Spence
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
