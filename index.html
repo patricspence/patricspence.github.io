@@ -1,181 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Patric R. Spence</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Public academic profiles, publications, and related projects for Patric R. Spence, Professor of Communication.">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
-
+  <link rel="icon" type="image/png" href="./favicon.png" />
+  <link rel="apple-touch-icon" href="./favicon.png" />
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
-      font-family: "Roboto", system-ui, -apple-system, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #181818;
-      color: #f5f5f5;
+      font-family: Georgia, serif;
+      background: #fafafa;
+      color: #111;
     }
-
-    .page {
-      padding: 36px 24px;
-      width: 100%;
-      max-width: 620px;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 36px;
-    }
-
-    header h1 {
-      margin: 0 0 10px 0;
-      font-size: 2.2rem;
-      font-weight: 300;
-      letter-spacing: 0.04em;
-      color: #f5f5f5;
-    }
-
-    .subtitle {
-      margin: 0 0 10px 0;
-      font-size: 0.85rem;
-      font-weight: 400;
-      color: #bdbdbd;
-      letter-spacing: 0.02em;
-      white-space: nowrap;
-    }
-
-    .note {
-      margin: 0 0 20px 0;
-      font-size: 0.8rem;
-      font-weight: 400;
-      color: #8f8f8f;
-      letter-spacing: 0.01em;
-    }
-
-    .divider {
-      border: none;
-      border-top: 1px solid #3d3d3d;
+    .container {
+      max-width: 950px;
       margin: 0 auto;
-      width: 80%;
+      padding: 40px 20px;
     }
-
-    .button-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 32px;
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.2em;
     }
-
-    .btn-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      padding: 13px 20px;
-      border-radius: 6px;
-      border: 1px solid #565656;
-      background-color: transparent;
-      color: #eeeeee;
-      font-family: "Roboto", sans-serif;
-      font-size: 0.96rem;
-      font-weight: 400;
+    .subtitle {
+      font-style: italic;
+      color: #444;
+      margin-bottom: 2rem;
+    }
+    .bio {
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+    .section {
+      margin-bottom: 2rem;
+    }
+    .section h2 {
+      font-size: 1.3rem;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.3rem;
+      margin-bottom: 0.8rem;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin-bottom: 0.6rem;
+    }
+    a {
+      color: #000;
       text-decoration: none;
-      cursor: pointer;
-      letter-spacing: 0.03em;
-      transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
-      text-align: center;
-      white-space: normal;
+      border-bottom: 1px solid #bbb;
     }
-
-    .btn-link:hover,
-    .btn-link:focus-visible {
-      border-color: #9a9a9a;
-      background-color: #222222;
-      outline: none;
+    a:hover {
+      border-bottom: 1px solid #000;
     }
-
-    .btn-link:active {
-      background-color: #282828;
-    }
-
     footer {
-      margin-top: 32px;
-      text-align: center;
-      font-size: 0.78rem;
-      color: #6f6f6f;
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      color: #666;
+      border-top: 1px solid #ddd;
+      padding-top: 1rem;
     }
-
     @media (max-width: 600px) {
-      header h1 {
-        font-size: 1.75rem;
+      h1 {
+        font-size: 2rem;
       }
-
-      .subtitle {
-        white-space: normal;
-        font-size: 0.82rem;
-      }
-
-      .page {
-        padding: 24px 16px;
+      .container {
+        padding: 30px 15px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="page">
-    <header>
-      <h1>Patric R. Spence</h1>
-      <p class="subtitle">Professor of Communication · Human–Machine Communication · Crisis &amp; Risk Communication</p>
-      <p class="note">Public academic profiles, publications, and related projects.</p>
-      <hr class="divider">
-    </header>
+  <div class="container">
+    <h1>Patric R. Spence</h1>
+    <div class="subtitle">Scholar. Editor. Researcher.</div>
 
-    <main aria-label="Academic profiles and related links">
-      <div class="button-list">
-        <a class="btn-link" href="https://scholar.google.com/citations?user=75AWeKoAAAAJ&amp;hl=en" target="_blank" rel="noopener noreferrer">
-          Publications on Google Scholar
-        </a>
-        <a class="btn-link" href="https://orcid.org/0000-0002-1793-6871" target="_blank" rel="noopener noreferrer">
-          ORCID iD
-        </a>
-        <a class="btn-link" href="https://www.webofscience.com/wos/author/record/LEM-0744-2024" target="_blank" rel="noopener noreferrer">
-          Web of Science Researcher Profile
-        </a>
-        <a class="btn-link" href="https://www.sciencedirect.com/author/15847046400/patric-r-spence" target="_blank" rel="noopener noreferrer">
-          ScienceDirect Author Page
-        </a>
-        <a class="btn-link" href="https://topscinet.com/scientist_profile/Spence,%20Patric%20R./2004/?stype=single_year" target="_blank" rel="noopener noreferrer">
-          World’s Top 2% Scientists — TopSciNet
-        </a>
-        <a class="btn-link" href="https://stars.library.ucf.edu/hmc/" target="_blank" rel="noopener noreferrer">
-          Human–Machine Communication Journal
-        </a>
-        <a class="btn-link" href="https://combotlabs.org/" target="_blank" rel="noopener noreferrer">
-          ComBot Labs Website
-        </a>
-        <a class="btn-link" href="https://research.com/u/patric-r-spence" target="_blank" rel="noopener noreferrer">
-          Research.com Profile
-        </a>
-      </div>
-    </main>
+    <div class="bio">
+      Patric R. Spence is a professor, researcher, and journal editor whose work focuses on communication, technology, and human–machine interaction.
+    </div>
+
+    <div class="section">
+      <h2>Profiles & Links</h2>
+      <ul>
+        <li><a href="#">Publications on Google Scholar</a></li>
+        <li><a href="#">ORCID iD</a></li>
+        <li><a href="#">Web of Science Researcher Profile</a></li>
+        <li><a href="#">ScienceDirect Author Page</a></li>
+        <li><a href="#">World’s Top 2% Scientists — TopSciNet</a></li>
+        <li><a href="#">Human–Machine Communication Journal</a></li>
+        <li><a href="#">ComBot Labs Website</a></li>
+        <li><a href="#">Research.com Profile</a></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>About</h2>
+      <p>
+        His research and editorial work explore communication in crisis contexts, AI-mediated interaction, and the social implications of emerging technologies.
+      </p>
+    </div>
 
     <footer>
-      © <span id="year">2026</span> Patric R. Spence
+      © 2026 Patric R. Spence
     </footer>
   </div>
-
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
 </body>
 </html>
