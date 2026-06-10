@@ -1,432 +1,35 @@
-```php id="pws-proxy-php"
-<?php
-// pws-proxy.php
-// Server-side proxy for Weather Underground / Weather.com PWS data.
-
-// SAFEST OPTION:
-// Store your key as an environment variable named WU_API_KEY.
-// If your host does not support environment variables, paste your key below.
-$apiKey = getenv('WU_API_KEY');
-
-// FALLBACK OPTION:
-// Uncomment the next line and paste your API key if environment variables are not available.
-// $apiKey = 'PASTE_YOUR_API_KEY_HERE';
-
-$allowedStations = [
-    'KFLOVIED224',
-    'KMIMOUNT110'
-];
-
-$stationId = isset($_GET['stationId']) ? strtoupper(trim($_GET['stationId'])) : '';
-
-header('Content-Type: application/json; charset=utf-8');
-
-if (!$apiKey) {
-    http_response_code(500);
-    echo json_encode([
-        'error' => 'API key is not configured on the server.'
-    ]);
-    exit;
-}
-
-if (!in_array($stationId, $allowedStations, true)) {
-    http_response_code(400);
-    echo json_encode([
-        'error' => 'Invalid or unauthorized station ID.'
-    ]);
-    exit;
-}
-
-$url = 'https://api.weather.com/v2/pws/observations/current'
-    . '?stationId=' . urlencode($stationId)
-    . '&format=json'
-    . '&units=e'
-    . '&apiKey=' . urlencode($apiKey);
-
-$ch = curl_init();
-
-curl_setopt_array($ch, [
-    CURLOPT_URL => $url,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_TIMEOUT => 12,
-    CURLOPT_CONNECTTIMEOUT => 8,
-    CURLOPT_SSL_VERIFYPEER => true,
-    CURLOPT_HTTPHEADER => [
-        'Accept: application/json'
-    ]
-]);
-
-$response = curl_exec($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$curlError = curl_error($ch);
-
-curl_close($ch);
-
-if ($response === false || $curlError) {
-    http_response_code(502);
-    echo json_encode([
-        'error' => 'Unable to contact Weather Underground.',
-        'details' => $curlError
-    ]);
-    exit;
-}
-
-if ($httpCode < 200 || $httpCode >= 300) {
-    http_response_code($httpCode);
-    echo json_encode([
-        'error' => 'Weather Underground returned an error.',
-        'status' => $httpCode
-    ]);
-    exit;
-}
-
-echo $response;
-```
-
-```html id="index-html"
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Weather Stations</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex, nofollow">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: "Roboto", system-ui, -apple-system, sans-serif;
-      min-height: 100vh;
-      background: #121212;
-      color: #e8e8e8;
-    }
-
-    body.light {
-      background: #f5f5f5;
-      color: #111;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 24px;
-      background: #181818;
-      border-bottom: 1px solid #2a2a2a;
-    }
-
-    body.light header {
-      background: #ffffff;
-      border-bottom: 1px solid #d6d6d6;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 1.05rem;
-      font-weight: 400;
-      letter-spacing: 0.04em;
-      color: #e8e8e8;
-    }
-
-    body.light header h1 {
-      color: #111;
-    }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .btn {
-      padding: 7px 14px;
-      border-radius: 5px;
-      border: 1px solid #3a3a3a;
-      background: transparent;
-      color: #d0d0d0;
-      font-size: 0.82rem;
-      font-family: inherit;
-      cursor: pointer;
-      letter-spacing: 0.02em;
-      transition: border-color 0.18s ease, background 0.18s ease;
-    }
-
-    body.light .btn {
-      border-color: #c7c7c7;
-      color: #333;
-    }
-
-    .btn:hover {
-      border-color: #666;
-      background: #1f1f1f;
-    }
-
-    body.light .btn:hover {
-      background: #ececec;
-    }
-
-    .btn.accent {
-      border-color: #4a8fff;
-      color: #8cb4ff;
-    }
-
-    .btn.accent:hover {
-      background: #1a2a4a;
-      border-color: #5a9fff;
-    }
-
-    body.light .btn.accent {
-      color: #1d5fd0;
-      border-color: #1d5fd0;
-    }
-
-    body.light .btn.accent:hover {
-      background: #e7f0ff;
-    }
-
-    main {
-      padding: 16px 20px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .station {
-      background: #161616;
-      border: 1px solid #282828;
-      border-radius: 7px;
-      padding: 16px 18px;
-    }
-
-    body.light .station {
-      background: #ffffff;
-      border: 1px solid #d8d8d8;
-    }
-
-    .station h2 {
-      margin: 0 0 5px 0;
-      font-size: 0.95rem;
-      font-weight: 500;
-      letter-spacing: 0.02em;
-      color: #a8a8a8;
-    }
-
-    .station h2 a {
-      color: #a8c7ff;
-      text-decoration: none;
-    }
-
-    body.light .station h2 a {
-      color: #174ea6;
-    }
-
-    .station h2 a:hover {
-      text-decoration: underline;
-    }
-
-    .station-id {
-      font-size: 0.75rem;
-      color: #777;
-      margin-bottom: 10px;
-    }
-
-    .station-id a {
-      color: #6f86a6;
-      text-decoration: none;
-    }
-
-    body.light .station-id a {
-      color: #174ea6;
-    }
-
-    .station-id a:hover {
-      text-decoration: underline;
-    }
-
-    .data-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
-      padding: 7px 0;
-      border-bottom: 1px solid #232323;
-    }
-
-    body.light .data-row {
-      border-bottom: 1px solid #ececec;
-    }
-
-    .data-row:last-child {
-      border-bottom: none;
-    }
-
-    .data-label {
-      font-size: 0.8rem;
-      color: #787878;
-    }
-
-    body.light .data-label {
-      color: #666;
-    }
-
-    .data-value {
-      font-size: 0.85rem;
-      color: #c8c8c8;
-      font-weight: 400;
-      text-align: right;
-      margin-left: 12px;
-    }
-
-    body.light .data-value {
-      color: #222;
-    }
-
-    .data-value.temp {
-      color: #6cb4ff;
-      font-size: 1rem;
-      font-weight: 500;
-    }
-
-    body.light .data-value.temp {
-      color: #1d5fd0;
-    }
-
-    .status {
-      margin-top: 14px;
-      text-align: center;
-      font-size: 0.75rem;
-      color: #666;
-    }
-
-    footer {
-      text-align: center;
-      font-size: 0.73rem;
-      color: #585858;
-      padding: 10px 0;
-      margin-top: 6px;
-    }
-
-    footer a {
-      color: #586878;
-      text-decoration: none;
-    }
-
-    @media (max-width: 800px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-    }
-  </style>
 </head>
+<body>
+  <h1>Weather Underground Personal Weather Stations</h1>
 
-<body class="dark">
-  <header>
-    <h1>Weather Underground Personal Weather Stations</h1>
-    <div class="actions">
-      <button class="btn accent" id="refreshBtn">Refresh</button>
-      <button class="btn" id="themeBtn" title="Toggle dark/light">Dark</button>
-    </div>
-  </header>
+  <h2>
+    <a href="https://www.wunderground.com/dashboard/pws/KFLOVIED224">
+      기상 관측소 - KFLOVIED224
+    </a>
+  </h2>
 
-  <main>
-    <div class="grid">
+  <p>Temperature: <span id="temp1">--</span></p>
+  <p>Humidity: <span id="hum1">--</span></p>
+  <p>Last Report: <span id="time1">--</span></p>
 
-      <section class="station">
-        <h2>
-          <a href="https://www.wunderground.com/dashboard/pws/KFLOVIED224" target="_blank" rel="noopener">
-            기상 관측소 - KFLOVIED224
-          </a>
-        </h2>
+  <h2>
+    <a href="https://www.wunderground.com/dashboard/pws/KMIMOUNT110">
+      북쪽 기상 관측소 - KMIMOUNT110
+    </a>
+  </h2>
 
-        <div class="station-id">
-          WU ID:
-          <a href="https://www.wunderground.com/dashboard/pws/KFLOVIED224" target="_blank" rel="noopener">
-            KFLOVIED224
-          </a>
-        </div>
+  <p>Temperature: <span id="temp2">--</span></p>
+  <p>Humidity: <span id="hum2">--</span></p>
+  <p>Last Report: <span id="time2">--</span></p>
 
-        <div class="data-row"><span class="data-label">Temperature</span><span class="data-value temp" id="temp1">--</span></div>
-        <div class="data-row"><span class="data-label">Feels Like</span><span class="data-value" id="heatIndex1">--</span></div>
-        <div class="data-row"><span class="data-label">Dew Point</span><span class="data-value" id="dewpt1">--</span></div>
-        <div class="data-row"><span class="data-label">Humidity</span><span class="data-value" id="hum1">--</span></div>
-        <div class="data-row"><span class="data-label">Wind Speed</span><span class="data-value" id="wind1">--</span></div>
-        <div class="data-row"><span class="data-label">Wind Gust</span><span class="data-value" id="gust1">--</span></div>
-        <div class="data-row"><span class="data-label">Wind Direction</span><span class="data-value" id="windDir1">--</span></div>
-        <div class="data-row"><span class="data-label">Rain Rate</span><span class="data-value" id="rainRate1">--</span></div>
-        <div class="data-row"><span class="data-label">Rain Today</span><span class="data-value" id="rainToday1">--</span></div>
-        <div class="data-row"><span class="data-label">Pressure</span><span class="data-value" id="press1">--</span></div>
-        <div class="data-row"><span class="data-label">Solar Radiation</span><span class="data-value" id="solar1">--</span></div>
-        <div class="data-row"><span class="data-label">UV</span><span class="data-value" id="uv1">--</span></div>
-        <div class="data-row"><span class="data-label">Last Report</span><span class="data-value" id="time1">--</span></div>
-        <div class="data-row"><span class="data-label">Source</span><span class="data-value" id="src1">--</span></div>
-      </section>
-
-      <section class="station">
-        <h2>
-          <a href="https://www.wunderground.com/dashboard/pws/KMIMOUNT110" target="_blank" rel="noopener">
-            북쪽 기상 관측소 - KMIMOUNT110
-          </a>
-        </h2>
-
-        <div class="station-id">
-          WU ID:
-          <a href="https://www.wunderground.com/dashboard/pws/KMIMOUNT110" target="_blank" rel="noopener">
-            KMIMOUNT110
-          </a>
-        </div>
-
-        <div class="data-row"><span class="data-label">Temperature</span><span class="data-value temp" id="temp2">--</span></div>
-        <div class="data-row"><span class="data-label">Feels Like</span><span class="data-value" id="heatIndex2">--</span></div>
-        <div class="data-row"><span class="data-label">Dew Point</span><span class="data-value" id="dewpt2">--</span></div>
-        <div class="data-row"><span class="data-label">Humidity</span><span class="data-value" id="hum2">--</span></div>
-        <div class="data-row"><span class="data-label">Wind Speed</span><span class="data-value" id="wind2">--</span></div>
-        <div class="data-row"><span class="data-label">Wind Gust</span><span class="data-value" id="gust2">--</span></div>
-        <div class="data-row"><span class="data-label">Wind Direction</span><span class="data-value" id="windDir2">--</span></div>
-        <div class="data-row"><span class="data-label">Rain Rate</span><span class="data-value" id="rainRate2">--</span></div>
-        <div class="data-row"><span class="data-label">Rain Today</span><span class="data-value" id="rainToday2">--</span></div>
-        <div class="data-row"><span class="data-label">Pressure</span><span class="data-value" id="press2">--</span></div>
-        <div class="data-row"><span class="data-label">Solar Radiation</span><span class="data-value" id="solar2">--</span></div>
-        <div class="data-row"><span class="data-label">UV</span><span class="data-value" id="uv2">--</span></div>
-        <div class="data-row"><span class="data-label">Last Report</span><span class="data-value" id="time2">--</span></div>
-        <div class="data-row"><span class="data-label">Source</span><span class="data-value" id="src2">--</span></div>
-      </section>
-
-    </div>
-
-    <div class="status" id="statusMsg">Loading station data...</div>
-  </main>
-
-  <footer>
-    Data from Weather Underground / Weather.com PWS observations API
-  </footer>
+  <p id="statusMsg">Loading weather-data.json...</p>
 
   <script>
-    function el(id) {
-      return document.getElementById(id);
-    }
-
-    function show(value, suffix = '') {
-      if (value === null || value === undefined || value === '') return '--';
-      return value + suffix;
-    }
-
     function showNumber(value, decimals = 1, suffix = '') {
       if (value === null || value === undefined || value === '') return '--';
       const n = Number(value);
@@ -436,9 +39,7 @@ echo $response;
 
     function showTime(epochSeconds) {
       if (!epochSeconds) return '--';
-
       const date = new Date(epochSeconds * 1000);
-
       return date.toLocaleString('en-US', {
         timeZone: 'America/New_York',
         month: 'short',
@@ -449,157 +50,30 @@ echo $response;
       });
     }
 
-    function windDirection(degrees) {
-      if (degrees === null || degrees === undefined || degrees === '') return '--';
-
-      const dirs = [
-        'N', 'NNE', 'NE', 'ENE',
-        'E', 'ESE', 'SE', 'SSE',
-        'S', 'SSW', 'SW', 'WSW',
-        'W', 'WNW', 'NW', 'NNW'
-      ];
-
-      const index = Math.round(Number(degrees) / 22.5) % 16;
-      return dirs[index] + ' (' + degrees + '°)';
-    }
-
-    function setUnavailable(cfg, message) {
-      el(cfg.idTemp).textContent = 'unavailable';
-      el(cfg.idHeatIndex).textContent = '--';
-      el(cfg.idDewpt).textContent = '--';
-      el(cfg.idHum).textContent = '--';
-      el(cfg.idWind).textContent = '--';
-      el(cfg.idGust).textContent = '--';
-      el(cfg.idWindDir).textContent = '--';
-      el(cfg.idRainRate).textContent = '--';
-      el(cfg.idRainToday).textContent = '--';
-      el(cfg.idPress).textContent = '--';
-      el(cfg.idSolar).textContent = '--';
-      el(cfg.idUv).textContent = '--';
-      el(cfg.idTime).textContent = '--';
-      el(cfg.idSrc).textContent = message || 'Data unavailable';
-    }
-
-    async function fetchStation(cfg) {
+    async function loadWeather() {
       try {
-        const url = 'pws-proxy.php?stationId=' + encodeURIComponent(cfg.stationId);
+        const response = await fetch('weather-data.json?cacheBust=' + Date.now());
+        const data = await response.json();
 
-        const res = await fetch(url, {
-          method: 'GET',
-          cache: 'no-store'
-        });
+        const s1 = data.observations.KFLOVIED224;
+        const s2 = data.observations.KMIMOUNT110;
 
-        const data = await res.json();
+        document.getElementById('temp1').textContent = showNumber(s1.imperial.temp, 1, '°F');
+        document.getElementById('hum1').textContent = s1.humidity + '%';
+        document.getElementById('time1').textContent = showTime(s1.epoch);
 
-        if (!res.ok) {
-          throw new Error(data.error || 'Proxy request failed');
-        }
+        document.getElementById('temp2').textContent = showNumber(s2.imperial.temp, 1, '°F');
+        document.getElementById('hum2').textContent = s2.humidity + '%';
+        document.getElementById('time2').textContent = showTime(s2.epoch);
 
-        if (!data.observations || !data.observations.length) {
-          throw new Error('No observation returned for ' + cfg.stationId);
-        }
-
-        const obs = data.observations[0];
-        const imperial = obs.imperial || {};
-
-        el(cfg.idTemp).textContent = showNumber(imperial.temp, 1, '°F');
-        el(cfg.idHeatIndex).textContent = showNumber(imperial.heatIndex, 1, '°F');
-        el(cfg.idDewpt).textContent = showNumber(imperial.dewpt, 1, '°F');
-        el(cfg.idHum).textContent = show(obs.humidity, '%');
-        el(cfg.idWind).textContent = showNumber(imperial.windSpeed, 1, ' mph');
-        el(cfg.idGust).textContent = showNumber(imperial.windGust, 1, ' mph');
-        el(cfg.idWindDir).textContent = windDirection(obs.winddir);
-        el(cfg.idRainRate).textContent = showNumber(imperial.precipRate, 2, ' in/hr');
-        el(cfg.idRainToday).textContent = showNumber(imperial.precipTotal, 2, ' in');
-        el(cfg.idPress).textContent = showNumber(imperial.pressure, 2, ' inHg');
-        el(cfg.idSolar).textContent = show(obs.solarRadiation, ' W/m²');
-        el(cfg.idUv).textContent = show(obs.uv);
-        el(cfg.idTime).textContent = showTime(obs.epoch);
-        el(cfg.idSrc).textContent = 'Weather Underground PWS: ' + cfg.stationId;
-
-        return true;
-
-      } catch (e) {
-        console.error(e);
-        setUnavailable(cfg, 'Weather Underground data unavailable');
-        return false;
+        document.getElementById('statusMsg').textContent = 'Updated from weather-data.json';
+      } catch (error) {
+        console.error(error);
+        document.getElementById('statusMsg').textContent = 'Could not load weather-data.json yet.';
       }
     }
 
-    const STATIONS = [
-      {
-        stationId: 'KFLOVIED224',
-        idTemp: 'temp1',
-        idHeatIndex: 'heatIndex1',
-        idDewpt: 'dewpt1',
-        idHum: 'hum1',
-        idWind: 'wind1',
-        idGust: 'gust1',
-        idWindDir: 'windDir1',
-        idRainRate: 'rainRate1',
-        idRainToday: 'rainToday1',
-        idPress: 'press1',
-        idSolar: 'solar1',
-        idUv: 'uv1',
-        idTime: 'time1',
-        idSrc: 'src1'
-      },
-      {
-        stationId: 'KMIMOUNT110',
-        idTemp: 'temp2',
-        idHeatIndex: 'heatIndex2',
-        idDewpt: 'dewpt2',
-        idHum: 'hum2',
-        idWind: 'wind2',
-        idGust: 'gust2',
-        idWindDir: 'windDir2',
-        idRainRate: 'rainRate2',
-        idRainToday: 'rainToday2',
-        idPress: 'press2',
-        idSolar: 'solar2',
-        idUv: 'uv2',
-        idTime: 'time2',
-        idSrc: 'src2'
-      }
-    ];
-
-    async function loadAll() {
-      el('statusMsg').textContent = 'Loading station data...';
-
-      const results = await Promise.all(STATIONS.map(fetchStation));
-      const successful = results.filter(Boolean).length;
-
-      const now = new Date().toLocaleString('en-US', {
-        timeZone: 'America/New_York',
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit'
-      });
-
-      if (successful === STATIONS.length) {
-        el('statusMsg').textContent = 'Updated ' + now;
-      } else if (successful > 0) {
-        el('statusMsg').textContent = 'Partially updated ' + now;
-      } else {
-        el('statusMsg').textContent = 'Station data unavailable. Check pws-proxy.php and the API key.';
-      }
-    }
-
-    el('refreshBtn').addEventListener('click', loadAll);
-
-    let dark = true;
-
-    el('themeBtn').addEventListener('click', function () {
-      dark = !dark;
-      document.body.className = dark ? 'dark' : 'light';
-      el('themeBtn').textContent = dark ? 'Dark' : 'Light';
-    });
-
-    loadAll();
-    setInterval(loadAll, 300000);
+    loadWeather();
   </script>
 </body>
 </html>
-```
