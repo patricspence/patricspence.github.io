@@ -28,13 +28,9 @@
     .data-label { font-size: 0.8rem; color: #787878; }
     .data-value { font-size: 0.85rem; color: #c8c8c8; font-weight: 400; }
     .data-value.temp { color: #6cb4ff; }
-    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #585858; margin-right: 6px; }
-    .iframe-wrap { position: relative; width: 100%; padding-top: 56.25%; margin-top: 8px; border-radius: 6px; overflow: hidden; border: 1px solid #282828; }
-    .iframe-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; background: #181818; }
     footer { text-align: center; font-size: 0.73rem; color: #585858; padding: 10px 0; margin-top: 6px; }
     footer a { color: #586878; text-decoration: none; }
     @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
-    html.dark .loading { color: #686868; font-size: 0.8rem; }
   </style>
 </head>
 <body class="dark">
@@ -54,11 +50,10 @@
         <div class="data-row"><span class="data-label">Temperature</span><span class="data-value temp" id="temp1">--</span></div>
         <div class="data-row"><span class="data-label">Humidity</span><span class="data-value" id="hum1">--</span></div>
         <div class="data-row"><span class="data-label">Wind Speed</span><span class="data-value" id="wind1">--</span></div>
-        <div class="data-row"><span class="data-label">Wind Direction</span><span class="data-value" id="windDir1">--</span></div>
+        <div class="data-row"><span class="data-label">Precipitation (1h)</span><span class="data-value" id="rain1">--</span></div>
         <div class="data-row"><span class="data-label">Pressure</span><span class="data-value" id="press1">--</span></div>
-        <div class="data-row"><span class="data-label">Precipitation</span><span class="data-value" id="rain1">--</span></div>
-        <div class="data-row"><span class="data-label">UV Index</span><span class="data-value" id="uv1">--</span></div>
-        <div class="data-row"><span class="data-label">Last Updated</span><span class="data-value" id="obs1">--</span></div>
+        <div class="data-row"><span class="data-label">Weather</span><span class="data-value" id="wx1">--</span></div>
+        <div class="data-row"><span class="data-label">Source</span><span class="data-value" id="src1">--</span></div>
       </section>
 
       <section class="station">
@@ -67,57 +62,79 @@
         <div class="data-row"><span class="data-label">Temperature</span><span class="data-value temp" id="temp2">--</span></div>
         <div class="data-row"><span class="data-label">Humidity</span><span class="data-value" id="hum2">--</span></div>
         <div class="data-row"><span class="data-label">Wind Speed</span><span class="data-value" id="wind2">--</span></div>
-        <div class="data-row"><span class="data-label">Wind Direction</span><span class="data-value" id="windDir2">--</span></div>
+        <div class="data-row"><span class="data-label">Precipitation (1h)</span><span class="data-value" id="rain2">--</span></div>
         <div class="data-row"><span class="data-label">Pressure</span><span class="data-value" id="press2">--</span></div>
-        <div class="data-row"><span class="data-label">Precipitation</span><span class="data-value" id="rain2">--</span></div>
-        <div class="data-row"><span class="data-label">UV Index</span><span class="data-value" id="uv2">--</span></div>
-        <div class="data-row"><span class="data-label">Last Updated</span><span class="data-value" id="obs2">--</span></div>
+        <div class="data-row"><span class="data-label">Weather</span><span class="data-value" id="wx2">--</span></div>
+        <div class="data-row"><span class="data-label">Source</span><span class="data-value" id="src2">--</span></div>
       </section>
     </div>
   </main>
 
   <footer>
-    Data via <a href="https://www.wunderground.com/" target="_blank" rel="noopener">Weather Underground</a>
+    Data via <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>
   </footer>
 
   <script>
-    const STATIONS = [
-      { id: 'KFLOVIED224', pfx: 'temp', div: '1' },
-      { id: 'KMIMOUNT110', pfx: 'temp', div: '2' }
-    ];
-
     function el(id) { return document.getElementById(id); }
 
-    function fmtTemp(t) { return (Math.round(t * 10) / 10) + '\u00B0F'; }
-    function fmtPct(v) { return (Math.round(v * 10) / 10) + '%'; }
-    function fmtSpeed(s) { return (Math.round(s * 10) / 10) + ' mph'; }
-    function fmtRain(r) { return (Math.round(r * 100) / 100) + ' in'; }
-    function fmtPress(p) { return (Math.round(p * 100) / 100) + ' inHg'; }
+    function fmtTempF(c) { return (c != null ? (Math.round(c * 1.8 * 10) / 10 + 32) + '\u00B0F' : '--'); }
+    function fmtPct(v) { return (v != null ? Math.round(v) + '%' : '--'); }
+    function fmtWind(km) { return (km != null ? (Math.round(km * 0.621 * 10) / 10) + ' mph' : '--'); }
+    function fmtRain(mm) { return (mm != null ? (Math.round(mm * 0.0394 * 100) / 100) + ' in' : '--'); }
+    function fmtPress(hPa) { return (hPa != null ? (Math.round(hPa * 0.0295 * 100) / 100) + ' inHg' : '--'); }
 
-    async function fetchStation(station) {
+    async function fetchStation(cfg) {
       try {
-        const res = await fetch('https://api.weather.com/v2/pws/observations/current?stationId=' + station.id + '&format=json&units=e');
-        const data = await res.json();
-        if (!data || !data.observations || !data.observations.length) throw new Error('no data');
-        const o = data.observations[0];
-        const i = station.div;
-        idTemp = 'temp' + i; idHum = 'hum' + i; idWind = 'wind' + i;
-        idWindDir = 'windDir' + i; idPress = 'press' + i; idRain = 'rain' + i; idUv = 'uv' + i; idObs = 'obs' + i;
+        const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + cfg.lat + '&longitude=' + cfg.lon +
+          '&current_weather=true&hourly=precipitation,rain,temperature_2m,relative_humidity_2m,surface_pressure&timezone=America%2FNew_York';
+        const res = await fetch(url);
+        const d = await res.json();
+        if (!d || !d.current_weather) throw new Error('no data');
+        const c = d.current_weather;
+        const h = d.hourly || {};
 
-        el(idTemp).textContent = fmtTemp(o.temp);
-        el(idHum).textContent = o.humidity != null ? fmtPct(o.humidity) : '--';
-        el(idWind).textContent = o.windSpeed != null ? fmtSpeed(o.windSpeed) : '--';
-        el(idWindDir).textContent = o.windDir || '--';
-        el(idPress).textContent = o.pressure != null ? fmtPress(o.pressure) : '--';
-        el(idRain).textContent = o.precipTotal1Hour != null ? fmtRain(o.precipTotal1Hour) : '--';
-        el(idUv).textContent = o.uvIndex != null ? o.uvIndex : '--';
-        el(idObs).textContent = o.obsTimeUtc ? new Date(o.obsTimeUtc).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : '--';
+        const now = Date.now() / 3600000 + 5;
+        let rain = '--', humid = '--', tempC = '--', press = '--';
+        for (let i = 0; h.time && i < h.time.length; i++) {
+          const dt = new Date(h.time[i]).getTime() / 3600000;
+          if (Math.abs(dt - now) < 1) {
+            if (h.precipitation) rain = h.precipitation[i];
+            if (h.temperature_2m) tempC = h.temperature_2m[i];
+            if (h.relative_humidity_2m) humid = h.relative_humidity_2m[i];
+            if (h.surface_pressure) press = h.surface_pressure[i];
+            break;
+          }
+        }
+        if (typeof tempC === '--') tempC = c.temperature;
+
+        el(cfg.idTemp).textContent = fmtTempF(c.temperature);
+        el(cfg.idHum).textContent = fmtPct(humid);
+        el(cfg.idWind).textContent = fmtWind(c.windspeed);
+        el(cfg.idRain).textContent = fmtRain(rain);
+        el(cfg.idPress).textContent = fmtPress(press);
+        el(cfg.idWx).textContent = wxCode(c.weathercode);
+        el(cfg.idSrc).textContent = 'Open-Meteo (approx ' + cfg.label + ')';
       } catch (e) {
-        const i = station.div;
-        el('temp'+i).textContent = 'unavailable';
-        el('hum'+i).textContent = '--';
+        el(cfg.idTemp).textContent = 'unavailable';
       }
     }
+
+    function wxCode(code) {
+      const map = [
+        'Clear', 'Clear', 'Cloudy', 'Cloudy', 'Fog', 'Fog', 'Rain', 'Rain', 'Rain',
+        'Rain/Snow', 'Rain/Snow', 'Rain', 'Snow', 'Snow', 'Thunderstorm'
+      ];
+      return map[code] || 'Unknown';
+    }
+
+    const STATIONS = [
+      { lat: 28.6028, lon: -81.1698, label: 'Oviedo, FL',
+        idTemp: 'temp1', idHum: 'hum1', idWind: 'wind1', idRain: 'rain1',
+        idPress: 'press1', idWx: 'wx1', idSrc: 'src1' },
+      { lat: 28.8028, lon: -81.6365, label: 'Mount Dora, FL',
+        idTemp: 'temp2', idHum: 'hum2', idWind: 'wind2', idRain: 'rain2',
+        idPress: 'press2', idWx: 'wx2', idSrc: 'src2' }
+    ];
 
     async function loadAll() {
       await Promise.all(STATIONS.map(fetchStation));
