@@ -1,19 +1,43 @@
+```json
 {
   "updatedAt": "2026-06-10T00:00:00.000Z",
   "observations": {
     "KFLOVIED224": {
+      "stationID": "KFLOVIED224",
       "epoch": 1781059200,
       "humidity": 70,
+      "solarRadiation": null,
+      "uv": null,
+      "winddir": 135,
       "imperial": {
-        "temp": 88.1
+        "temp": 88.1,
+        "heatIndex": 94.2,
+        "dewpt": 73.5,
+        "windSpeed": 3.2,
+        "windGust": 7.1,
+        "pressure": 29.92,
+        "precipRate": 0,
+        "precipTotal": 0
       }
     },
     "KMIMOUNT110": {
+      "stationID": "KMIMOUNT110",
       "epoch": 1781059200,
       "humidity": 65,
+      "solarRadiation": null,
+      "uv": null,
+      "winddir": 90,
       "imperial": {
-        "temp": 84.4
+        "temp": 84.4,
+        "heatIndex": 88.6,
+        "dewpt": 71.2,
+        "windSpeed": 2.8,
+        "windGust": 6.4,
+        "pressure": 29.95,
+        "precipRate": 0,
+        "precipTotal": 0
       }
     }
   }
 }
+```
