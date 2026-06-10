@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,6 +28,99 @@
   <p>Humidity: <span id="hum2">--</span></p>
   <p>Last Report: <span id="time2">--</span></p>
 
-  <p id="statusMsg">Page is working. Weather data is not connected yet.</p>
+  <p id="statusMsg">Loading weather data...</p>
+
+  <script>
+    function showNumber(value, decimals = 1, suffix = '') {
+      if (value === null || value === undefined || value === '') return '--';
+      const n = Number(value);
+      if (Number.isNaN(n)) return '--';
+      return n.toFixed(decimals) + suffix;
+    }
+
+    function showTime(epochSeconds) {
+      if (!epochSeconds) return '--';
+
+      const date = new Date(epochSeconds * 1000);
+
+      return date.toLocaleString('en-US', {
+        timeZone: 'America/New_York',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+    }
+
+    function displayStation(stationId, tempId, humId, timeId, observations) {
+      const obs = observations[stationId];
+
+      if (!obs) {
+        document.getElementById(tempId).textContent = 'unavailable';
+        document.getElementById(humId).textContent = '--';
+        document.getElementById(timeId).textContent = '--';
+        return false;
+      }
+
+      const imperial = obs.imperial || {};
+
+      document.getElementById(tempId).textContent = showNumber(imperial.temp, 1, '°F');
+      document.getElementById(humId).textContent = obs.humidity !== undefined ? obs.humidity + '%' : '--';
+      document.getElementById(timeId).textContent = showTime(obs.epoch);
+
+      return true;
+    }
+
+    async function loadWeather() {
+      try {
+        const response = await fetch('weather-data.json?cacheBust=' + Date.now(), {
+          cache: 'no-store'
+        });
+
+        if (!response.ok) {
+          throw new Error('Could not load weather-data.json');
+        }
+
+        const data = await response.json();
+        const observations = data.observations || {};
+
+        let successful = 0;
+
+        if (displayStation('KFLOVIED224', 'temp1', 'hum1', 'time1', observations)) {
+          successful++;
+        }
+
+        if (displayStation('KMIMOUNT110', 'temp2', 'hum2', 'time2', observations)) {
+          successful++;
+        }
+
+        if (data.updatedAt) {
+          const updated = new Date(data.updatedAt).toLocaleString('en-US', {
+            timeZone: 'America/New_York',
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit'
+          });
+
+          document.getElementById('statusMsg').textContent =
+            successful + ' of 2 stations loaded. Updated ' + updated + '.';
+        } else {
+          document.getElementById('statusMsg').textContent =
+            successful + ' of 2 stations loaded.';
+        }
+
+      } catch (error) {
+        console.error(error);
+        document.getElementById('statusMsg').textContent =
+          'Could not load weather-data.json yet.';
+      }
+    }
+
+    loadWeather();
+  </script>
 </body>
 </html>
+```
