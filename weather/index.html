@@ -27,53 +27,6 @@
   <p>Humidity: <span id="hum2">--</span></p>
   <p>Last Report: <span id="time2">--</span></p>
 
-  <p id="statusMsg">Loading weather-data.json...</p>
-
-  <script>
-    function showNumber(value, decimals = 1, suffix = '') {
-      if (value === null || value === undefined || value === '') return '--';
-      const n = Number(value);
-      if (Number.isNaN(n)) return '--';
-      return n.toFixed(decimals) + suffix;
-    }
-
-    function showTime(epochSeconds) {
-      if (!epochSeconds) return '--';
-      const date = new Date(epochSeconds * 1000);
-      return date.toLocaleString('en-US', {
-        timeZone: 'America/New_York',
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit'
-      });
-    }
-
-    async function loadWeather() {
-      try {
-        const response = await fetch('weather-data.json?cacheBust=' + Date.now());
-        const data = await response.json();
-
-        const s1 = data.observations.KFLOVIED224;
-        const s2 = data.observations.KMIMOUNT110;
-
-        document.getElementById('temp1').textContent = showNumber(s1.imperial.temp, 1, '°F');
-        document.getElementById('hum1').textContent = s1.humidity + '%';
-        document.getElementById('time1').textContent = showTime(s1.epoch);
-
-        document.getElementById('temp2').textContent = showNumber(s2.imperial.temp, 1, '°F');
-        document.getElementById('hum2').textContent = s2.humidity + '%';
-        document.getElementById('time2').textContent = showTime(s2.epoch);
-
-        document.getElementById('statusMsg').textContent = 'Updated from weather-data.json';
-      } catch (error) {
-        console.error(error);
-        document.getElementById('statusMsg').textContent = 'Could not load weather-data.json yet.';
-      }
-    }
-
-    loadWeather();
-  </script>
+  <p id="statusMsg">Page is working. Weather data is not connected yet.</p>
 </body>
 </html>
