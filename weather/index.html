@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weather Stations</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Roboto", system-ui, -apple-system, sans-serif; min-height: 100vh; background: #121212; color: #e8e8e8; }
+    header { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: #181818; border-bottom: 1px solid #2a2a2a; }
+    header h1 { margin: 0; font-size: 1.05rem; font-weight: 400; letter-spacing: 0.04em; color: #e8e8e8; }
+    .actions { display: flex; gap: 10px; align-items: center; }
+    .btn { padding: 7px 14px; border-radius: 5px; border: 1px solid #3a3a3a; background: transparent; color: #d0d0d0; font-size: 0.82rem; font-family: inherit; cursor: pointer; letter-spacing: 0.02em; transition: border-color 0.18s ease, background 0.18s ease; }
+    .btn:hover { border-color: #666; background: #1f1f1f; }
+    .btn.accent { border-color: #4a8fff; color: #8cb4ff; }
+    .btn.accent:hover { background: #1a2a4a; border-color: #5a9fff; }
+    main { padding: 16px 20px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .station { background: #161616; border: 1px solid #282828; border-radius: 7px; padding: 16px 18px; }
+    .station h2 { margin: 0 0 5px 0; font-size: 0.9rem; font-weight: 500; letter-spacing: 0.02em; color: #a8a8a8; }
+    .station-id { font-size: 0.75rem; color: #585858; margin-bottom: 10px; }
+    .data-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid #232323; }
+    .data-row:last-child { border-bottom: none; }
+    .data-label { font-size: 0.8rem; color: #787878; }
+    .data-value { font-size: 0.85rem; color: #c8c8c8; font-weight: 400; }
+    .data-value.temp { color: #6cb4ff; }
+    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #585858; margin-right: 6px; }
+    .iframe-wrap { position: relative; width: 100%; padding-top: 56.25%; margin-top: 8px; border-radius: 6px; overflow: hidden; border: 1px solid #282828; }
+    .iframe-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; background: #181818; }
+    footer { text-align: center; font-size: 0.73rem; color: #585858; padding: 10px 0; margin-top: 6px; }
+    footer a { color: #586878; text-decoration: none; }
+    @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+    html.dark .loading { color: #686868; font-size: 0.8rem; }
+  </style>
+</head>
+<body class="dark">
+  <header>
+    <h1>Oviedo Weather Stations</h1>
+    <div class="actions">
+      <button class="btn accent" id="refreshBtn">Refresh</button>
+      <button class="btn" id="themeBtn" title="Toggle dark/light">Dark</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="station">
+        <h2>Oviedo, FL &mdash; Near Me</h2>
+        <div class="station-id">WU ID: KFLOVIED224</div>
+        <div class="data-row"><span class="data-label">Temperature</span><span class="data-value temp" id="temp1">--</span></div>
+        <div class="data-row"><span class="data-label">Humidity</span><span class="data-value" id="hum1">--</span></div>
+        <div class="data-row"><span class="data-label">Wind Speed</span><span class="data-value" id="wind1">--</span></div>
+        <div class="data-row"><span class="data-label">Wind Direction</span><span class="data-value" id="windDir1">--</span></div>
+        <div class="data-row"><span class="data-label">Pressure</span><span class="data-value" id="press1">--</span></div>
+        <div class="data-row"><span class="data-label">Precipitation</span><span class="data-value" id="rain1">--</span></div>
+        <div class="data-row"><span class="data-label">UV Index</span><span class="data-value" id="uv1">--</span></div>
+        <div class="data-row"><span class="data-label">Last Updated</span><span class="data-value" id="obs1">--</span></div>
+      </section>
+
+      <section class="station">
+        <h2>Mount Dora, FL</h2>
+        <div class="station-id">WU ID: KMIMOUNT110</div>
+        <div class="data-row"><span class="data-label">Temperature</span><span class="data-value temp" id="temp2">--</span></div>
+        <div class="data-row"><span class="data-label">Humidity</span><span class="data-value" id="hum2">--</span></div>
+        <div class="data-row"><span class="data-label">Wind Speed</span><span class="data-value" id="wind2">--</span></div>
+        <div class="data-row"><span class="data-label">Wind Direction</span><span class="data-value" id="windDir2">--</span></div>
+        <div class="data-row"><span class="data-label">Pressure</span><span class="data-value" id="press2">--</span></div>
+        <div class="data-row"><span class="data-label">Precipitation</span><span class="data-value" id="rain2">--</span></div>
+        <div class="data-row"><span class="data-label">UV Index</span><span class="data-value" id="uv2">--</span></div>
+        <div class="data-row"><span class="data-label">Last Updated</span><span class="data-value" id="obs2">--</span></div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    Data via <a href="https://www.wunderground.com/" target="_blank" rel="noopener">Weather Underground</a>
+  </footer>
+
+  <script>
+    const STATIONS = [
+      { id: 'KFLOVIED224', pfx: 'temp', div: '1' },
+      { id: 'KMIMOUNT110', pfx: 'temp', div: '2' }
+    ];
+
+    function el(id) { return document.getElementById(id); }
+
+    function fmtTemp(t) { return (Math.round(t * 10) / 10) + '\u00B0F'; }
+    function fmtPct(v) { return (Math.round(v * 10) / 10) + '%'; }
+    function fmtSpeed(s) { return (Math.round(s * 10) / 10) + ' mph'; }
+    function fmtRain(r) { return (Math.round(r * 100) / 100) + ' in'; }
+    function fmtPress(p) { return (Math.round(p * 100) / 100) + ' inHg'; }
+
+    async function fetchStation(station) {
+      try {
+        const res = await fetch('https://api.weather.com/v2/pws/observations/current?stationId=' + station.id + '&format=json&units=e');
+        const data = await res.json();
+        if (!data || !data.observations || !data.observations.length) throw new Error('no data');
+        const o = data.observations[0];
+        const i = station.div;
+        idTemp = 'temp' + i; idHum = 'hum' + i; idWind = 'wind' + i;
+        idWindDir = 'windDir' + i; idPress = 'press' + i; idRain = 'rain' + i; idUv = 'uv' + i; idObs = 'obs' + i;
+
+        el(idTemp).textContent = fmtTemp(o.temp);
+        el(idHum).textContent = o.humidity != null ? fmtPct(o.humidity) : '--';
+        el(idWind).textContent = o.windSpeed != null ? fmtSpeed(o.windSpeed) : '--';
+        el(idWindDir).textContent = o.windDir || '--';
+        el(idPress).textContent = o.pressure != null ? fmtPress(o.pressure) : '--';
+        el(idRain).textContent = o.precipTotal1Hour != null ? fmtRain(o.precipTotal1Hour) : '--';
+        el(idUv).textContent = o.uvIndex != null ? o.uvIndex : '--';
+        el(idObs).textContent = o.obsTimeUtc ? new Date(o.obsTimeUtc).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : '--';
+      } catch (e) {
+        const i = station.div;
+        el('temp'+i).textContent = 'unavailable';
+        el('hum'+i).textContent = '--';
+      }
+    }
+
+    async function loadAll() {
+      await Promise.all(STATIONS.map(fetchStation));
+    }
+
+    el('refreshBtn').addEventListener('click', loadAll);
+
+    let dark = true;
+    el('themeBtn').addEventListener('click', function () {
+      dark = !dark;
+      document.body.className = dark ? 'dark' : 'light';
+      el('themeBtn').textContent = dark ? 'Dark' : 'Light';
+      document.body.style.background = dark ? '#121212' : '#f5f5f5';
+      document.body.style.color = dark ? '#e8e8e8' : '#111';
+    });
+
+    loadAll();
+    setInterval(loadAll, 300000);
+  </script>
+</body>
+</html>
