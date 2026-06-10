@@ -7,150 +7,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-
   <style>
-    :root {
-      --bg: #121212;
-      --panel: #171717;
-      --panel-border: #2a2a2a;
-      --header: #181818;
-      --text: #e8e8e8;
-      --muted: #8a8a8a;
-      --dim: #5f5f5f;
-      --accent: #6cb4ff;
-      --accent-soft: #a8c7ff;
-      --row-border: #252525;
-      --button-border: #3a3a3a;
-      --button-hover: #222;
-      --good: #9be29b;
-      --warning: #ffd27a;
-      --bad: #ff8a8a;
-    }
-
-    body.light {
-      --bg: #f5f5f5;
-      --panel: #ffffff;
-      --panel-border: #d7d7d7;
-      --header: #ffffff;
-      --text: #111111;
-      --muted: #606060;
-      --dim: #777777;
-      --accent: #1d5fd0;
-      --accent-soft: #174ea6;
-      --row-border: #eeeeee;
-      --button-border: #c7c7c7;
-      --button-hover: #ececec;
-      --good: #247a24;
-      --warning: #8a5d00;
-      --bad: #a33131;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
-      min-height: 100vh;
-      font-family: "Roboto", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      background: #121212;
+      color: #e8e8e8;
+      padding: 24px;
     }
 
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      padding: 14px 24px;
-      background: var(--header);
-      border-bottom: 1px solid var(--panel-border);
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 1.05rem;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-    }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 7px 14px;
-      border-radius: 6px;
-      border: 1px solid var(--button-border);
-      background: transparent;
-      color: var(--text);
-      font-size: 0.82rem;
-      font-family: inherit;
-      cursor: pointer;
-      letter-spacing: 0.02em;
-      transition: border-color 0.18s ease, background 0.18s ease;
-    }
-
-    .btn:hover {
-      background: var(--button-hover);
-      border-color: var(--muted);
-    }
-
-    .btn.accent {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    main {
-      width: min(1120px, 100%);
-      margin: 0 auto;
-      padding: 18px 20px 10px;
-    }
-
-    .intro {
-      margin: 0 0 16px;
-      color: var(--muted);
-      font-size: 0.86rem;
-      line-height: 1.45;
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 400;
+      margin-bottom: 20px;
     }
 
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
+      gap: 16px;
+      max-width: 1000px;
     }
 
     .station {
-      background: var(--panel);
-      border: 1px solid var(--panel-border);
-      border-radius: 10px;
-      padding: 18px 20px;
-      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
-    }
-
-    .station-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-      margin-bottom: 12px;
+      background: #181818;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 18px;
     }
 
     .station h2 {
-      margin: 0 0 5px;
       font-size: 1rem;
+      margin: 0 0 12px;
       font-weight: 500;
-      line-height: 1.3;
     }
 
     .station h2 a {
-      color: var(--accent-soft);
+      color: #8cb4ff;
       text-decoration: none;
     }
 
@@ -158,235 +51,102 @@
       text-decoration: underline;
     }
 
-    .station-id {
-      font-size: 0.76rem;
-      color: var(--dim);
-    }
-
-    .station-id a {
-      color: var(--muted);
-      text-decoration: none;
-    }
-
-    .station-id a:hover {
-      text-decoration: underline;
-    }
-
     .big-temp {
-      text-align: right;
-      white-space: nowrap;
-    }
-
-    .big-temp .value {
-      display: block;
       font-size: 2rem;
-      line-height: 1;
-      font-weight: 700;
-      color: var(--accent);
+      color: #6cb4ff;
+      margin: 8px 0 16px;
+      font-weight: bold;
     }
 
-    .big-temp .label {
-      display: block;
-      margin-top: 4px;
-      font-size: 0.72rem;
-      color: var(--dim);
-    }
-
-    .data-row {
+    .row {
       display: flex;
       justify-content: space-between;
-      align-items: center;
       gap: 14px;
-      padding: 8px 0;
-      border-bottom: 1px solid var(--row-border);
+      border-bottom: 1px solid #292929;
+      padding: 7px 0;
+      font-size: 0.9rem;
     }
 
-    .data-row:last-child {
+    .row:last-child {
       border-bottom: none;
     }
 
-    .data-label {
-      color: var(--muted);
-      font-size: 0.82rem;
+    .label {
+      color: #999;
     }
 
-    .data-value {
-      color: var(--text);
-      font-size: 0.86rem;
-      font-weight: 400;
+    .value {
       text-align: right;
-      overflow-wrap: anywhere;
     }
 
-    .status {
-      margin-top: 16px;
-      padding: 10px 12px;
-      border: 1px solid var(--panel-border);
-      border-radius: 8px;
-      background: var(--panel);
-      text-align: center;
-      font-size: 0.78rem;
-      color: var(--muted);
+    #statusMsg {
+      margin-top: 18px;
+      color: #aaa;
+      font-size: 0.85rem;
     }
 
-    .status.good {
-      color: var(--good);
-    }
-
-    .status.warning {
-      color: var(--warning);
-    }
-
-    .status.bad {
-      color: var(--bad);
-    }
-
-    footer {
-      text-align: center;
-      font-size: 0.73rem;
-      color: var(--dim);
-      padding: 12px 0 18px;
-    }
-
-    footer a {
-      color: var(--muted);
-      text-decoration: none;
-    }
-
-    footer a:hover {
-      text-decoration: underline;
-    }
-
-    @media (max-width: 850px) {
+    @media (max-width: 800px) {
       .grid {
         grid-template-columns: 1fr;
-      }
-
-      header {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-    }
-
-    @media (max-width: 480px) {
-      main {
-        padding-left: 12px;
-        padding-right: 12px;
-      }
-
-      .station {
-        padding: 16px;
-      }
-
-      .station-top {
-        flex-direction: column;
-      }
-
-      .big-temp {
-        text-align: left;
       }
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <h1>Weather Underground Personal Weather Stations</h1>
-    <div class="actions">
-      <button class="btn accent" id="refreshBtn">Refresh</button>
-      <button class="btn" id="themeBtn" title="Toggle dark/light">Dark</button>
-    </div>
-  </header>
+  <h1>Weather Underground Personal Weather Stations</h1>
 
-  <main>
-    <p class="intro">
-      Current readings from two personal Weather Underground stations. Station names link to their Weather Underground dashboards.
-    </p>
+  <div class="grid">
+    <section class="station">
+      <h2>
+        <a href="https://www.wunderground.com/dashboard/pws/KFLOVIED224" target="_blank" rel="noopener">
+          기상 관측소 - KFLOVIED224
+        </a>
+      </h2>
 
-    <div class="grid">
-      <section class="station">
-        <div class="station-top">
-          <div>
-            <h2>
-              <a href="https://www.wunderground.com/dashboard/pws/KFLOVIED224" target="_blank" rel="noopener">
-                기상 관측소 - KFLOVIED224
-              </a>
-            </h2>
-            <div class="station-id">
-              WU ID:
-              <a href="https://www.wunderground.com/dashboard/pws/KFLOVIED224" target="_blank" rel="noopener">
-                KFLOVIED224
-              </a>
-            </div>
-          </div>
+      <div class="big-temp" id="temp1Big">--</div>
 
-          <div class="big-temp">
-            <span class="value" id="temp1Big">--</span>
-            <span class="label">Current Temp</span>
-          </div>
-        </div>
+      <div class="row"><span class="label">Temperature</span><span class="value" id="temp1">--</span></div>
+      <div class="row"><span class="label">Feels Like</span><span class="value" id="heatIndex1">--</span></div>
+      <div class="row"><span class="label">Dew Point</span><span class="value" id="dewpt1">--</span></div>
+      <div class="row"><span class="label">Humidity</span><span class="value" id="hum1">--</span></div>
+      <div class="row"><span class="label">Wind Speed</span><span class="value" id="wind1">--</span></div>
+      <div class="row"><span class="label">Wind Gust</span><span class="value" id="gust1">--</span></div>
+      <div class="row"><span class="label">Wind Direction</span><span class="value" id="windDir1">--</span></div>
+      <div class="row"><span class="label">Rain Rate</span><span class="value" id="rainRate1">--</span></div>
+      <div class="row"><span class="label">Rain Today</span><span class="value" id="rainToday1">--</span></div>
+      <div class="row"><span class="label">Pressure</span><span class="value" id="press1">--</span></div>
+      <div class="row"><span class="label">Solar Radiation</span><span class="value" id="solar1">--</span></div>
+      <div class="row"><span class="label">UV</span><span class="value" id="uv1">--</span></div>
+      <div class="row"><span class="label">Last Report</span><span class="value" id="time1">--</span></div>
+    </section>
 
-        <div class="data-row"><span class="data-label">Temperature</span><span class="data-value" id="temp1">--</span></div>
-        <div class="data-row"><span class="data-label">Feels Like</span><span class="data-value" id="heatIndex1">--</span></div>
-        <div class="data-row"><span class="data-label">Dew Point</span><span class="data-value" id="dewpt1">--</span></div>
-        <div class="data-row"><span class="data-label">Humidity</span><span class="data-value" id="hum1">--</span></div>
-        <div class="data-row"><span class="data-label">Wind Speed</span><span class="data-value" id="wind1">--</span></div>
-        <div class="data-row"><span class="data-label">Wind Gust</span><span class="data-value" id="gust1">--</span></div>
-        <div class="data-row"><span class="data-label">Wind Direction</span><span class="data-value" id="windDir1">--</span></div>
-        <div class="data-row"><span class="data-label">Rain Rate</span><span class="data-value" id="rainRate1">--</span></div>
-        <div class="data-row"><span class="data-label">Rain Today</span><span class="data-value" id="rainToday1">--</span></div>
-        <div class="data-row"><span class="data-label">Pressure</span><span class="data-value" id="press1">--</span></div>
-        <div class="data-row"><span class="data-label">Solar Radiation</span><span class="data-value" id="solar1">--</span></div>
-        <div class="data-row"><span class="data-label">UV</span><span class="data-value" id="uv1">--</span></div>
-        <div class="data-row"><span class="data-label">Last Report</span><span class="data-value" id="time1">--</span></div>
-        <div class="data-row"><span class="data-label">Source</span><span class="data-value" id="src1">--</span></div>
-      </section>
+    <section class="station">
+      <h2>
+        <a href="https://www.wunderground.com/dashboard/pws/KMIMOUNT110" target="_blank" rel="noopener">
+          북쪽 기상 관측소 - KMIMOUNT110
+        </a>
+      </h2>
 
-      <section class="station">
-        <div class="station-top">
-          <div>
-            <h2>
-              <a href="https://www.wunderground.com/dashboard/pws/KMIMOUNT110" target="_blank" rel="noopener">
-                북쪽 기상 관측소 - KMIMOUNT110
-              </a>
-            </h2>
-            <div class="station-id">
-              WU ID:
-              <a href="https://www.wunderground.com/dashboard/pws/KMIMOUNT110" target="_blank" rel="noopener">
-                KMIMOUNT110
-              </a>
-            </div>
-          </div>
+      <div class="big-temp" id="temp2Big">--</div>
 
-          <div class="big-temp">
-            <span class="value" id="temp2Big">--</span>
-            <span class="label">Current Temp</span>
-          </div>
-        </div>
+      <div class="row"><span class="label">Temperature</span><span class="value" id="temp2">--</span></div>
+      <div class="row"><span class="label">Feels Like</span><span class="value" id="heatIndex2">--</span></div>
+      <div class="row"><span class="label">Dew Point</span><span class="value" id="dewpt2">--</span></div>
+      <div class="row"><span class="label">Humidity</span><span class="value" id="hum2">--</span></div>
+      <div class="row"><span class="label">Wind Speed</span><span class="value" id="wind2">--</span></div>
+      <div class="row"><span class="label">Wind Gust</span><span class="value" id="gust2">--</span></div>
+      <div class="row"><span class="label">Wind Direction</span><span class="value" id="windDir2">--</span></div>
+      <div class="row"><span class="label">Rain Rate</span><span class="value" id="rainRate2">--</span></div>
+      <div class="row"><span class="label">Rain Today</span><span class="value" id="rainToday2">--</span></div>
+      <div class="row"><span class="label">Pressure</span><span class="value" id="press2">--</span></div>
+      <div class="row"><span class="label">Solar Radiation</span><span class="value" id="solar2">--</span></div>
+      <div class="row"><span class="label">UV</span><span class="value" id="uv2">--</span></div>
+      <div class="row"><span class="label">Last Report</span><span class="value" id="time2">--</span></div>
+    </section>
+  </div>
 
-        <div class="data-row"><span class="data-label">Temperature</span><span class="data-value" id="temp2">--</span></div>
-        <div class="data-row"><span class="data-label">Feels Like</span><span class="data-value" id="heatIndex2">--</span></div>
-        <div class="data-row"><span class="data-label">Dew Point</span><span class="data-value" id="dewpt2">--</span></div>
-        <div class="data-row"><span class="data-label">Humidity</span><span class="data-value" id="hum2">--</span></div>
-        <div class="data-row"><span class="data-label">Wind Speed</span><span class="data-value" id="wind2">--</span></div>
-        <div class="data-row"><span class="data-label">Wind Gust</span><span class="data-value" id="gust2">--</span></div>
-        <div class="data-row"><span class="data-label">Wind Direction</span><span class="data-value" id="windDir2">--</span></div>
-        <div class="data-row"><span class="data-label">Rain Rate</span><span class="data-value" id="rainRate2">--</span></div>
-        <div class="data-row"><span class="data-label">Rain Today</span><span class="data-value" id="rainToday2">--</span></div>
-        <div class="data-row"><span class="data-label">Pressure</span><span class="data-value" id="press2">--</span></div>
-        <div class="data-row"><span class="data-label">Solar Radiation</span><span class="data-value" id="solar2">--</span></div>
-        <div class="data-row"><span class="data-label">UV</span><span class="data-value" id="uv2">--</span></div>
-        <div class="data-row"><span class="data-label">Last Report</span><span class="data-value" id="time2">--</span></div>
-        <div class="data-row"><span class="data-label">Source</span><span class="data-value" id="src2">--</span></div>
-      </section>
-    </div>
-
-    <div class="status" id="statusMsg">Loading weather data...</div>
-  </main>
-
-  <footer>
-    Data from Weather Underground / Weather.com PWS observations API via GitHub Actions
-  </footer>
+  <p id="statusMsg">Loading weather data...</p>
 
   <script>
     const STATIONS = [
@@ -406,8 +166,7 @@
           pressure: 'press1',
           solar: 'solar1',
           uv: 'uv1',
-          time: 'time1',
-          source: 'src1'
+          time: 'time1'
         }
       },
       {
@@ -426,8 +185,7 @@
           pressure: 'press2',
           solar: 'solar2',
           uv: 'uv2',
-          time: 'time2',
-          source: 'src2'
+          time: 'time2'
         }
       }
     ];
@@ -480,41 +238,16 @@
       return dirs[index] + ' (' + n + '°)';
     }
 
-    function setStatus(message, type) {
-      const status = el('statusMsg');
-      status.textContent = message;
-      status.className = 'status' + (type ? ' ' + type : '');
-    }
-
-    function setUnavailable(station, message) {
+    function displayStation(station, obs) {
       const ids = station.ids;
 
-      el(ids.tempBig).textContent = '--';
-      el(ids.temp).textContent = 'unavailable';
-      el(ids.heatIndex).textContent = '--';
-      el(ids.dewpt).textContent = '--';
-      el(ids.humidity).textContent = '--';
-      el(ids.windSpeed).textContent = '--';
-      el(ids.windGust).textContent = '--';
-      el(ids.windDir).textContent = '--';
-      el(ids.rainRate).textContent = '--';
-      el(ids.rainToday).textContent = '--';
-      el(ids.pressure).textContent = '--';
-      el(ids.solar).textContent = '--';
-      el(ids.uv).textContent = '--';
-      el(ids.time).textContent = '--';
-      el(ids.source).textContent = message || 'Data unavailable';
-    }
-
-    function displayStation(station, obs) {
       if (!obs) {
-        setUnavailable(station, 'Station data unavailable');
+        el(ids.tempBig).textContent = '--';
+        el(ids.temp).textContent = 'unavailable';
         return false;
       }
 
-      const ids = station.ids;
       const imperial = obs.imperial || {};
-
       const temp = showNumber(imperial.temp, 1, '°F');
 
       el(ids.tempBig).textContent = temp;
@@ -531,25 +264,48 @@
       el(ids.solar).textContent = show(obs.solarRadiation, ' W/m²');
       el(ids.uv).textContent = show(obs.uv);
       el(ids.time).textContent = showTime(obs.epoch);
-      el(ids.source).textContent = 'Weather Underground PWS: ' + station.stationId;
 
       return true;
     }
 
+    async function fetchWeatherData() {
+      const pathsToTry = [
+        'weather-data.json',
+        '/weather/weather-data.json'
+      ];
+
+      let lastError = null;
+
+      for (const path of pathsToTry) {
+        try {
+          const response = await fetch(path + '?cacheBust=' + Date.now(), {
+            cache: 'no-store'
+          });
+
+          if (!response.ok) {
+            throw new Error(path + ' returned HTTP ' + response.status);
+          }
+
+          const data = await response.json();
+          return { data, path };
+
+        } catch (error) {
+          lastError = error;
+          console.warn('Could not load ' + path, error);
+        }
+      }
+
+      throw lastError || new Error('Could not load weather-data.json');
+    }
+
     async function loadWeather() {
-      setStatus('Loading weather data...', '');
+      el('statusMsg').textContent = 'Loading weather data...';
 
       try {
-        const response = await fetch('weather-data.json?cacheBust=' + Date.now(), {
-          cache: 'no-store'
-        });
-
-        if (!response.ok) {
-          throw new Error('Could not load weather-data.json');
-        }
-
-        const data = await response.json();
+        const result = await fetchWeatherData();
+        const data = result.data;
         const observations = data.observations || {};
+
         let successful = 0;
 
         STATIONS.forEach(function(station) {
@@ -573,34 +329,15 @@
           updatedText = ' Updated ' + updated + '.';
         }
 
-        if (successful === STATIONS.length) {
-          setStatus(successful + ' of ' + STATIONS.length + ' stations loaded.' + updatedText, 'good');
-        } else if (successful > 0) {
-          setStatus(successful + ' of ' + STATIONS.length + ' stations loaded.' + updatedText, 'warning');
-        } else {
-          setStatus('Station data unavailable.' + updatedText, 'bad');
-        }
+        el('statusMsg').textContent =
+          successful + ' of ' + STATIONS.length + ' stations loaded from ' + result.path + '.' + updatedText;
 
       } catch (error) {
         console.error(error);
-
-        STATIONS.forEach(function(station) {
-          setUnavailable(station, 'Could not load weather-data.json');
-        });
-
-        setStatus('Could not load weather-data.json.', 'bad');
+        el('statusMsg').textContent =
+          'Could not load weather-data.json. Make sure it is saved at weather/weather-data.json and contains valid JSON.';
       }
     }
-
-    el('refreshBtn').addEventListener('click', loadWeather);
-
-    let dark = true;
-
-    el('themeBtn').addEventListener('click', function () {
-      dark = !dark;
-      document.body.className = dark ? '' : 'light';
-      el('themeBtn').textContent = dark ? 'Dark' : 'Light';
-    });
 
     loadWeather();
     setInterval(loadWeather, 300000);
