@@ -35,20 +35,43 @@
       padding: 18px;
     }
 
-    .station h2 {
-      font-size: 1rem;
-      margin: 0 0 12px;
-      font-weight: 500;
-    }
+    ..station-title {
+  margin: 0 0 14px;
+}
 
-    .station h2 a {
-      color: #8cb4ff;
-      text-decoration: none;
-    }
+.station-title a {
+  display: block;
+  text-decoration: none;
+}
 
-    .station h2 a:hover {
-      text-decoration: underline;
-    }
+.station-title a:hover .station-location {
+  color: #8cb4ff;
+}
+
+.station-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #999;
+  margin-bottom: 2px;
+  letter-spacing: 0.5px;
+}
+
+.station-location {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.2;
+  transition: color 0.2s ease;
+}
+
+.station-id {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: #6cb4ff;
+  font-family: Consolas, Monaco, monospace;
+}
 
     .big-temp {
       font-size: 2rem;
