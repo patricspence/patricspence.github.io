@@ -111,6 +111,11 @@ h1 {
   margin-bottom: 16px;
 }
 
+.below-dashboard {
+  max-width: 1500px;
+  margin-top: 16px;
+}
+
 .guide-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -372,43 +377,6 @@ h1 {
   </p>
 </header>
 
-<div class="top-bar">
-  <section class="panel">
-    <h2>Dashboard status</h2>
-    <p class="status-top" id="topStatus">
-      Loading weather data...
-    </p>
-  </section>
-
-  
-</div>
-
-<div class="guide-grid">
-  <section class="panel">
-    <h2>Metric feel guide</h2>
-    <div class="guide-list">
-      <div>0°C = freezing</div>
-      <div>10°C = cool</div>
-      <div>20°C = comfortable</div>
-      <div>25°C = warm</div>
-      <div>30°C+ = hot</div>
-      <div>16°C dew point = getting humid</div>
-      <div>21°C+ dew point = very humid</div>
-      <div>25 mm+ rain = heavy daily rain</div>
-    </div>
-  </section>
-
-  <section class="panel">
-    <h2>Korea weather intuition</h2>
-    <ul>
-      <li>Celsius is the everyday temperature frame.</li>
-      <li>Rain is usually discussed in millimeters.</li>
-      <li>Wind may appear as km/h or m/s, so both are shown.</li>
-      <li>Pressure is commonly shown in hPa.</li>
-    </ul>
-  </section>
-</div>
-
 <div class="grid">
 
   <section class="station" aria-label="Oviedo Florida weather station">
@@ -533,6 +501,52 @@ h1 {
 
     <div class="unit-note" id="note3">--</div>
   </section>
+
+</div>
+
+<div class="below-dashboard">
+
+  <div class="top-bar">
+    <section class="panel">
+      <h2>Dashboard status</h2>
+      <p class="status-top" id="topStatus">
+        Loading weather data...
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>Privacy note</h2>
+      <p>
+        This page asks search engines not to index it, but it is still a public page if someone has the direct URL. Avoid adding API keys, home details, travel schedules, or anything sensitive.
+      </p>
+    </section>
+  </div>
+
+  <div class="guide-grid">
+    <section class="panel">
+      <h2>Metric feel guide</h2>
+      <div class="guide-list">
+        <div>0°C = freezing</div>
+        <div>10°C = cool</div>
+        <div>20°C = comfortable</div>
+        <div>25°C = warm</div>
+        <div>30°C+ = hot</div>
+        <div>16°C dew point = getting humid</div>
+        <div>21°C+ dew point = very humid</div>
+        <div>25 mm+ rain = heavy daily rain</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Korea weather intuition</h2>
+      <ul>
+        <li>Celsius is the everyday temperature frame.</li>
+        <li>Rain is usually discussed in millimeters.</li>
+        <li>Wind may appear as km/h or m/s, so both are shown.</li>
+        <li>Pressure is commonly shown in hPa.</li>
+      </ul>
+    </section>
+  </div>
 
 </div>
 
