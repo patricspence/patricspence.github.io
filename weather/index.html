@@ -5,316 +5,591 @@
 <title>Weather Stations</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+
 <style>
 body {
-margin: 0;
-font-family: Arial, Helvetica, sans-serif;
-background: #121212;
-color: #e8e8e8;
-padding: 24px;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #121212;
+  color: #e8e8e8;
+  padding: 24px;
 }
+
 h1 {
-font-size: 1.4rem;
-font-weight: 400;
-margin-bottom: 20px;
+  font-size: 1.4rem;
+  font-weight: 400;
+  margin: 0 0 20px;
 }
+
 .grid {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 16px;
-max-width: 1000px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  max-width: 1000px;
 }
+
 .station {
-background: #181818;
-border: 1px solid #333;
-border-radius: 8px;
-padding: 18px;
+  background: #181818;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 18px;
 }
+
 .station-title {
-margin: 0 0 14px;
+  margin: 0 0 14px;
 }
+
 .station-title a {
-display: block;
-text-decoration: none;
+  display: block;
+  text-decoration: none;
 }
+
 .station-title a:hover .station-location {
-color: #8cb4ff;
+  color: #8cb4ff;
 }
+
 .station-label {
-display: block;
-font-size: 1.05rem;
-color: #999;
-margin-bottom: 4px;
-letter-spacing: 0.2px;
-line-height: 1.2;
+  display: block;
+  font-size: 1.05rem;
+  color: #999;
+  margin-bottom: 4px;
+  letter-spacing: 0.2px;
+  line-height: 1.2;
 }
+
 .station-location {
-display: block;
-font-size: 1.35rem;
-font-weight: 600;
-color: #fff;
-line-height: 1.2;
-transition: color 0.2s ease;
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.2;
+  transition: color 0.2s ease;
 }
+
 .station-id {
-display: block;
-margin-top: 4px;
-font-size: 1.05rem;
-color: #6cb4ff;
-font-family: Consolas, Monaco, monospace;
+  display: block;
+  margin-top: 4px;
+  font-size: 1.05rem;
+  color: #6cb4ff;
+  font-family: Consolas, Monaco, monospace;
 }
+
 .big-temp {
-font-size: 2rem;
-color: #6cb4ff;
-margin: 8px 0 16px;
-font-weight: bold;
+  font-size: 2rem;
+  color: #6cb4ff;
+  margin: 8px 0 16px;
+  font-weight: bold;
 }
+
 .row {
-display: flex;
-justify-content: space-between;
-gap: 14px;
-border-bottom: 1px solid #292929;
-padding: 7px 0;
-font-size: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 1px solid #292929;
+  padding: 7px 0;
+  font-size: 0.9rem;
 }
+
 .row:last-child {
-border-bottom: none;
+  border-bottom: none;
 }
+
 .label {
-color: #999;
+  color: #999;
 }
+
 .value {
-text-align: right;
-overflow-wrap: anywhere;
+  text-align: right;
+  overflow-wrap: anywhere;
 }
+
 #statusMsg {
-margin-top: 18px;
-color: #aaa;
-font-size: 0.85rem;
+  margin-top: 18px;
+  color: #aaa;
+  font-size: 0.85rem;
 }
+
 @media (max-width: 800px) {
-.grid {
-grid-template-columns: 1fr;
+  .grid {
+    grid-template-columns: 1fr;
+  }
 }
-}
-</style></head><body>
+</style>
+</head>
+
+<body>
 <h1>Weather Underground Personal Weather Stations</h1>
+
 <div class="grid">
-<section class="station">
-<h2 class="station-title">
-<a href="https://www.wunderground.com/dashboard/pws/KFLOVIED224" target="_blank" rel="noopener">
-<span class="station-label">기상 관측소</span>
-<span class="station-location">Oviedo, FL</span>
-<span class="station-id">KFLOVIED224</span>
-</a></h2> <div class="big-temp" id="temp1Big">--</div>
-<div class="row"><span class="label">Temperature</span><span class="value" id="temp1">--</span></div>
-<div class="row"><span class="label">Feels Like</span><span class="value" id="heatIndex1">--</span></div>
-<div class="row"><span class="label">Dew Point</span><span class="value" id="dewpt1">--</span></div>
-<div class="row"><span class="label">Humidity</span><span class="value" id="hum1">--</span></div>
-<div class="row"><span class="label">Wind Speed</span><span class="value" id="wind1">--</span></div>
-<div class="row"><span class="label">Wind Gust</span><span class="value" id="gust1">--</span></div>
-<div class="row"><span class="label">Wind Direction</span><span class="value" id="windDir1">--</span></div>
-<div class="row"><span class="label">Rain Rate</span><span class="value" id="rainRate1">--</span></div>
-<div class="row"><span class="label">Rain Today</span><span class="value" id="rainToday1">--</span></div>
-<div class="row"><span class="label">Pressure</span><span class="value" id="press1">--</span></div>
-<div class="row"><span class="label">Solar Radiation</span><span class="value" id="solar1">--</span></div>
-<div class="row"><span class="label">UV</span><span class="value" id="uv1">--</span></div>
-<div class="row"><span class="label">Last Report</span><span class="value" id="time1">--</span></div>
-</section>
-<section class="station">
-<h2 class="station-title">
-<a href="https://www.wunderground.com/dashboard/pws/KMIMOUNT110" target="_blank" rel="noopener">
-<span class="station-label">북쪽 기상 관측소</span>
-<span class="station-location">Mt. Pleasant, MI</span>
-<span class="station-id">KMIMOUNT110</span>
-</a></h2> <div class="big-temp" id="temp2Big">--</div>
-<div class="row"><span class="label">Temperature</span><span class="value" id="temp2">--</span></div>
-<div class="row"><span class="label">Feels Like</span><span class="value" id="heatIndex2">--</span></div>
-<div class="row"><span class="label">Dew Point</span><span class="value" id="dewpt2">--</span></div>
-<div class="row"><span class="label">Humidity</span><span class="value" id="hum2">--</span></div>
-<div class="row"><span class="label">Wind Speed</span><span class="value" id="wind2">--</span></div>
-<div class="row"><span class="label">Wind Gust</span><span class="value" id="gust2">--</span></div>
-<div class="row"><span class="label">Wind Direction</span><span class="value" id="windDir2">--</span></div>
-<div class="row"><span class="label">Rain Rate</span><span class="value" id="rainRate2">--</span></div>
-<div class="row"><span class="label">Rain Today</span><span class="value" id="rainToday2">--</span></div>
-<div class="row"><span class="label">Pressure</span><span class="value" id="press2">--</span></div>
-<div class="row"><span class="label">Solar Radiation</span><span class="value" id="solar2">--</span></div>
-<div class="row"><span class="label">UV</span><span class="value" id="uv2">--</span></div>
-<div class="row"><span class="label">Last Report</span><span class="value" id="time2">--</span></div>
-</section>
+
+  <section class="station" aria-label="Oviedo Florida weather station">
+    <h2 class="station-title">
+      <a href="https://www.wunderground.com/dashboard/pws/KFLOVIED224" target="_blank" rel="noopener">
+        <span class="station-label">기상 관측소</span>
+        <span class="station-location">Oviedo, FL</span>
+        <span class="station-id">KFLOVIED224</span>
+      </a>
+    </h2>
+
+    <div class="big-temp" id="temp1Big">--</div>
+    <div class="row"><span class="label">Temperature</span><span class="value" id="temp1">--</span></div>
+    <div class="row"><span class="label">Feels Like</span><span class="value" id="heatIndex1">--</span></div>
+    <div class="row"><span class="label">Dew Point</span><span class="value" id="dewpt1">--</span></div>
+    <div class="row"><span class="label">Humidity</span><span class="value" id="hum1">--</span></div>
+    <div class="row"><span class="label">Wind Speed</span><span class="value" id="wind1">--</span></div>
+    <div class="row"><span class="label">Wind Gust</span><span class="value" id="gust1">--</span></div>
+    <div class="row"><span class="label">Wind Direction</span><span class="value" id="windDir1">--</span></div>
+    <div class="row"><span class="label">Rain Rate</span><span class="value" id="rainRate1">--</span></div>
+    <div class="row"><span class="label">Rain Today</span><span class="value" id="rainToday1">--</span></div>
+    <div class="row"><span class="label">Pressure</span><span class="value" id="press1">--</span></div>
+    <div class="row"><span class="label">Solar Radiation</span><span class="value" id="solar1">--</span></div>
+    <div class="row"><span class="label">UV</span><span class="value" id="uv1">--</span></div>
+    <div class="row"><span class="label">Last Report</span><span class="value" id="time1">--</span></div>
+  </section>
+
+  <section class="station" aria-label="Mount Pleasant Michigan weather station">
+    <h2 class="station-title">
+      <a href="https://www.wunderground.com/dashboard/pws/KMIMOUNT110" target="_blank" rel="noopener">
+        <span class="station-label">북쪽 기상 관측소</span>
+        <span class="station-location">Mt. Pleasant, MI</span>
+        <span class="station-id">KMIMOUNT110</span>
+      </a>
+    </h2>
+
+    <div class="big-temp" id="temp2Big">--</div>
+    <div class="row"><span class="label">Temperature</span><span class="value" id="temp2">--</span></div>
+    <div class="row"><span class="label">Feels Like</span><span class="value" id="heatIndex2">--</span></div>
+    <div class="row"><span class="label">Dew Point</span><span class="value" id="dewpt2">--</span></div>
+    <div class="row"><span class="label">Humidity</span><span class="value" id="hum2">--</span></div>
+    <div class="row"><span class="label">Wind Speed</span><span class="value" id="wind2">--</span></div>
+    <div class="row"><span class="label">Wind Gust</span><span class="value" id="gust2">--</span></div>
+    <div class="row"><span class="label">Wind Direction</span><span class="value" id="windDir2">--</span></div>
+    <div class="row"><span class="label">Rain Rate</span><span class="value" id="rainRate2">--</span></div>
+    <div class="row"><span class="label">Rain Today</span><span class="value" id="rainToday2">--</span></div>
+    <div class="row"><span class="label">Pressure</span><span class="value" id="press2">--</span></div>
+    <div class="row"><span class="label">Solar Radiation</span><span class="value" id="solar2">--</span></div>
+    <div class="row"><span class="label">UV</span><span class="value" id="uv2">--</span></div>
+    <div class="row"><span class="label">Last Report</span><span class="value" id="time2">--</span></div>
+  </section>
+
 </div>
+
 <p id="statusMsg">Loading weather data...</p>
+
 <script>
 const STATIONS = [
-{
-stationId: 'KFLOVIED224',
-ids: {
-tempBig: 'temp1Big',
-temp: 'temp1',
-heatIndex: 'heatIndex1',
-dewpt: 'dewpt1',
-humidity: 'hum1',
-windSpeed: 'wind1',
-windGust: 'gust1',
-windDir: 'windDir1',
-rainRate: 'rainRate1',
-rainToday: 'rainToday1',
-pressure: 'press1',
-solar: 'solar1',
-uv: 'uv1',
-time: 'time1'
-}
-},
-{
-stationId: 'KMIMOUNT110',
-ids: {
-tempBig: 'temp2Big',
-temp: 'temp2',
-heatIndex: 'heatIndex2',
-dewpt: 'dewpt2',
-humidity: 'hum2',
-windSpeed: 'wind2',
-windGust: 'gust2',
-windDir: 'windDir2',
-rainRate: 'rainRate2',
-rainToday: 'rainToday2',
-pressure: 'press2',
-solar: 'solar2',
-uv: 'uv2',
-time: 'time2'
-}
-}
+  {
+    stationId: 'KFLOVIED224',
+    ids: {
+      tempBig: 'temp1Big',
+      temp: 'temp1',
+      heatIndex: 'heatIndex1',
+      dewpt: 'dewpt1',
+      humidity: 'hum1',
+      windSpeed: 'wind1',
+      windGust: 'gust1',
+      windDir: 'windDir1',
+      rainRate: 'rainRate1',
+      rainToday: 'rainToday1',
+      pressure: 'press1',
+      solar: 'solar1',
+      uv: 'uv1',
+      time: 'time1'
+    }
+  },
+  {
+    stationId: 'KMIMOUNT110',
+    ids: {
+      tempBig: 'temp2Big',
+      temp: 'temp2',
+      heatIndex: 'heatIndex2',
+      dewpt: 'dewpt2',
+      humidity: 'hum2',
+      windSpeed: 'wind2',
+      windGust: 'gust2',
+      windDir: 'windDir2',
+      rainRate: 'rainRate2',
+      rainToday: 'rainToday2',
+      pressure: 'press2',
+      solar: 'solar2',
+      uv: 'uv2',
+      time: 'time2'
+    }
+  }
 ];
+
+/*
+  This page tries several paths because GitHub Pages/custom domains can
+  resolve relative paths differently depending on whether the page is loaded
+  from /weather/ or directly as /weather/index.html.
+*/
+const WEATHER_DATA_PATHS = [
+  'weather-data.json',
+  './weather-data.json',
+  '/weather/weather-data.json',
+  '/weather-data.json'
+];
+
 function el(id) {
-return document.getElementById(id);
+  return document.getElementById(id);
 }
+
+function setText(id, value) {
+  const node = el(id);
+  if (node) node.textContent = value;
+}
+
+function hasValue(value) {
+  return value !== null && value !== undefined && value !== '';
+}
+
+function firstValue() {
+  for (let i = 0; i < arguments.length; i++) {
+    if (hasValue(arguments[i])) return arguments[i];
+  }
+  return null;
+}
+
 function show(value, suffix = '') {
-if (value === null || value === undefined || value === '') return '--';
-return value + suffix;
+  if (!hasValue(value)) return '--';
+  return value + suffix;
 }
-function showNumber(value, decimals = 1, suffix = '') {
-if (value === null || value === undefined || value === '') return '--';
-const n = Number(value);
-if (Number.isNaN(n)) return '--';
-return n.toFixed(decimals) + suffix;
-}
+
 function showDual(imperialValue, imperialSuffix, metricValue, metricSuffix, decimals = 1) {
-if (
-imperialValue === null || imperialValue === undefined || imperialValue === '' ||
-metricValue === null || metricValue === undefined || metricValue === ''
-) return '--';
+  const parts = [];
 
-const imp = Number(imperialValue);
-const met = Number(metricValue);
-if (Number.isNaN(imp) || Number.isNaN(met)) return '--';
+  if (hasValue(imperialValue)) {
+    const imp = Number(imperialValue);
+    if (!Number.isNaN(imp)) {
+      parts.push(imp.toFixed(decimals) + imperialSuffix);
+    }
+  }
 
-return imp.toFixed(decimals) + imperialSuffix + ' / ' + met.toFixed(decimals) + metricSuffix;
+  if (hasValue(metricValue)) {
+    const met = Number(metricValue);
+    if (!Number.isNaN(met)) {
+      parts.push(met.toFixed(decimals) + metricSuffix);
+    }
+  }
+
+  return parts.length ? parts.join(' / ') : '--';
 }
-function showTime(epochSeconds) {
-if (!epochSeconds) return '--';
-const date = new Date(epochSeconds * 1000);
-return date.toLocaleString('en-US', {
-timeZone: 'America/New_York',
-month: 'short',
-day: 'numeric',
-year: 'numeric',
-hour: 'numeric',
-minute: '2-digit'
-});
+
+function showTime(obs) {
+  if (!obs) return '--';
+
+  const epochSeconds = firstValue(obs.epoch, obs.valid_time_gmt);
+
+  if (hasValue(epochSeconds)) {
+    const date = new Date(Number(epochSeconds) * 1000);
+    if (!Number.isNaN(date.getTime())) {
+      return date.toLocaleString('en-US', {
+        timeZone: 'America/New_York',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+    }
+  }
+
+  const timeText = firstValue(obs.obsTimeLocal, obs.obsTimeUtc, obs.time, obs.date);
+  if (hasValue(timeText)) {
+    const date = new Date(timeText);
+    if (!Number.isNaN(date.getTime())) {
+      return date.toLocaleString('en-US', {
+        timeZone: 'America/New_York',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+    }
+
+    return String(timeText);
+  }
+
+  return '--';
 }
+
 function windDirection(degrees) {
-if (degrees === null || degrees === undefined || degrees === '') return '--';
-const dirs = [
-'N', 'NNE', 'NE', 'ENE',
-'E', 'ESE', 'SE', 'SSE',
-'S', 'SSW', 'SW', 'WSW',
-'W', 'WNW', 'NW', 'NNW'
-];
-const n = Number(degrees);
-if (Number.isNaN(n)) return '--';
-const index = Math.round(n / 22.5) % 16;
-return dirs[index] + ' (' + n + '°)';
+  if (!hasValue(degrees)) return '--';
+
+  const dirs = [
+    'N', 'NNE', 'NE', 'ENE',
+    'E', 'ESE', 'SE', 'SSE',
+    'S', 'SSW', 'SW', 'WSW',
+    'W', 'WNW', 'NW', 'NNW'
+  ];
+
+  const n = Number(degrees);
+  if (Number.isNaN(n)) return '--';
+
+  const index = Math.round(n / 22.5) % 16;
+  return dirs[index] + ' (' + Math.round(n) + '°)';
 }
+
+function clearStation(station, message = 'unavailable') {
+  const ids = station.ids;
+
+  setText(ids.tempBig, '--');
+  setText(ids.temp, message);
+  setText(ids.heatIndex, '--');
+  setText(ids.dewpt, '--');
+  setText(ids.humidity, '--');
+  setText(ids.windSpeed, '--');
+  setText(ids.windGust, '--');
+  setText(ids.windDir, '--');
+  setText(ids.rainRate, '--');
+  setText(ids.rainToday, '--');
+  setText(ids.pressure, '--');
+  setText(ids.solar, '--');
+  setText(ids.uv, '--');
+  setText(ids.time, '--');
+}
+
+function getObservationForStation(data, stationId) {
+  if (!data) return null;
+
+  /*
+    Supported JSON shapes:
+
+    1. Your earlier custom shape:
+       {
+         "observations": {
+           "KFLOVIED224": { ... },
+           "KMIMOUNT110": { ... }
+         }
+       }
+
+    2. Weather Underground raw/current shape:
+       {
+         "observations": [
+           { "stationID": "KFLOVIED224", ... }
+         ]
+       }
+
+    3. A direct station-keyed object:
+       {
+         "KFLOVIED224": { ... },
+         "KMIMOUNT110": { ... }
+       }
+  */
+
+  const observations = data.observations;
+
+  if (Array.isArray(observations)) {
+    return observations.find(function(obs) {
+      return obs &&
+        (
+          obs.stationID === stationId ||
+          obs.stationId === stationId ||
+          obs.station_id === stationId ||
+          obs.id === stationId
+        );
+    }) || null;
+  }
+
+  if (observations && typeof observations === 'object') {
+    if (observations[stationId]) {
+      return observations[stationId];
+    }
+
+    const values = Object.values(observations);
+    return values.find(function(obs) {
+      return obs &&
+        (
+          obs.stationID === stationId ||
+          obs.stationId === stationId ||
+          obs.station_id === stationId ||
+          obs.id === stationId
+        );
+    }) || null;
+  }
+
+  if (data[stationId]) {
+    return data[stationId];
+  }
+
+  if (
+    data.stationID === stationId ||
+    data.stationId === stationId ||
+    data.station_id === stationId ||
+    data.id === stationId
+  ) {
+    return data;
+  }
+
+  return null;
+}
+
 function displayStation(station, obs) {
-const ids = station.ids;
-if (!obs) {
-el(ids.tempBig).textContent = '--';
-el(ids.temp).textContent = 'unavailable';
-return false;
+  const ids = station.ids;
+
+  if (!obs) {
+    clearStation(station, 'station not found');
+    return false;
+  }
+
+  const imperial = obs.imperial || {};
+  const metric = obs.metric || {};
+
+  const tempImperial = firstValue(imperial.temp, obs.tempf, obs.tempF, obs.temperatureF);
+  const tempMetric = firstValue(metric.temp, obs.tempc, obs.tempC, obs.temperatureC);
+
+  const feelsImperial = firstValue(
+    imperial.heatIndex,
+    imperial.windChill,
+    imperial.feelsLike,
+    obs.heatIndexf,
+    obs.windchillf,
+    tempImperial
+  );
+
+  const feelsMetric = firstValue(
+    metric.heatIndex,
+    metric.windChill,
+    metric.feelsLike,
+    obs.heatIndexc,
+    obs.windchillc,
+    tempMetric
+  );
+
+  const dewptImperial = firstValue(imperial.dewpt, obs.dewptf, obs.dewPointF);
+  const dewptMetric = firstValue(metric.dewpt, obs.dewptc, obs.dewPointC);
+
+  const windSpeedImperial = firstValue(imperial.windSpeed, obs.windspeedmph);
+  const windSpeedMetric = firstValue(metric.windSpeed, obs.windspeedkph);
+
+  const windGustImperial = firstValue(imperial.windGust, obs.windgustmph);
+  const windGustMetric = firstValue(metric.windGust, obs.windgustkph);
+
+  const rainRateImperial = firstValue(imperial.precipRate, obs.precipRate, obs.rainRateIn);
+  const rainRateMetric = firstValue(metric.precipRate, obs.precipRateMetric, obs.rainRateMm);
+
+  const rainTotalImperial = firstValue(imperial.precipTotal, obs.precipTotal, obs.rainTodayIn);
+  const rainTotalMetric = firstValue(metric.precipTotal, obs.precipTotalMetric, obs.rainTodayMm);
+
+  const pressureImperial = firstValue(imperial.pressure, obs.pressureIn);
+  const pressureMetric = firstValue(metric.pressure, obs.pressureMb, obs.pressureHPa, obs.pressureHpa);
+
+  setText(ids.tempBig, showDual(tempImperial, '°F', tempMetric, '°C', 1));
+  setText(ids.temp, showDual(tempImperial, '°F', tempMetric, '°C', 1));
+  setText(ids.heatIndex, showDual(feelsImperial, '°F', feelsMetric, '°C', 1));
+  setText(ids.dewpt, showDual(dewptImperial, '°F', dewptMetric, '°C', 1));
+  setText(ids.humidity, show(firstValue(obs.humidity, obs.hum), '%'));
+  setText(ids.windSpeed, showDual(windSpeedImperial, ' mph', windSpeedMetric, ' km/h', 1));
+  setText(ids.windGust, showDual(windGustImperial, ' mph', windGustMetric, ' km/h', 1));
+  setText(ids.windDir, windDirection(firstValue(obs.winddir, obs.windDir, obs.windDirection)));
+  setText(ids.rainRate, showDual(rainRateImperial, ' in/hr', rainRateMetric, ' mm/hr', 2));
+  setText(ids.rainToday, showDual(rainTotalImperial, ' in', rainTotalMetric, ' mm', 2));
+  setText(ids.pressure, showDual(pressureImperial, ' inHg', pressureMetric, ' hPa', 2));
+  setText(ids.solar, show(firstValue(obs.solarRadiation, obs.solarradiation), ' W/m²'));
+  setText(ids.uv, show(firstValue(obs.uv, obs.UV)));
+  setText(ids.time, showTime(obs));
+
+  return true;
 }
-const imperial = obs.imperial || {};
-const metric = obs.metric || {};
-el(ids.tempBig).textContent = showDual(imperial.temp, '°F', metric.temp, '°C', 1);
-el(ids.temp).textContent = showDual(imperial.temp, '°F', metric.temp, '°C', 1);
-el(ids.heatIndex).textContent = showDual(imperial.heatIndex, '°F', metric.heatIndex, '°C', 1);
-el(ids.dewpt).textContent = showDual(imperial.dewpt, '°F', metric.dewpt, '°C', 1);
-el(ids.humidity).textContent = show(obs.humidity, '%');
-el(ids.windSpeed).textContent = showDual(imperial.windSpeed, ' mph', metric.windSpeed, ' km/h', 1);
-el(ids.windGust).textContent = showDual(imperial.windGust, ' mph', metric.windGust, ' km/h', 1);
-el(ids.windDir).textContent = windDirection(obs.winddir);
-el(ids.rainRate).textContent = showDual(imperial.precipRate, ' in/hr', metric.precipRate, ' mm/hr', 2);
-el(ids.rainToday).textContent = showDual(imperial.precipTotal, ' in', metric.precipTotal, ' mm', 2);
-el(ids.pressure).textContent = showDual(imperial.pressure, ' inHg', metric.pressure, ' hPa', 2);
-el(ids.solar).textContent = show(obs.solarRadiation, ' W/m²');
-el(ids.uv).textContent = show(obs.uv);
-el(ids.time).textContent = showTime(obs.epoch);
-return true;
-}
+
 async function fetchWeatherData() {
-const pathsToTry = [
-'weather-data.json',
-'/weather/weather-data.json'
-];
-let lastError = null;
-for (const path of pathsToTry) {
-try {
-const response = await fetch(path + '?cacheBust=' + Date.now(), {
-cache: 'no-store'
-});
-if (!response.ok) {
-throw new Error(path + ' returned HTTP ' + response.status);
+  let lastError = null;
+
+  for (const path of WEATHER_DATA_PATHS) {
+    try {
+      const response = await fetch(path + '?cacheBust=' + Date.now(), {
+        cache: 'no-store'
+      });
+
+      if (!response.ok) {
+        throw new Error(path + ' returned HTTP ' + response.status);
+      }
+
+      const data = await response.json();
+      return { data, path };
+    } catch (error) {
+      lastError = error;
+      console.warn('Could not load ' + path, error);
+    }
+  }
+
+  throw lastError || new Error('Could not load weather-data.json');
 }
-const data = await response.json();
-return { data, path };
-} catch (error) {
-lastError = error;
-console.warn('Could not load ' + path, error);
+
+function formatUpdatedAt(data) {
+  const updatedRaw = firstValue(data.updatedAt, data.generatedAt, data.lastUpdated);
+
+  if (!hasValue(updatedRaw)) return '';
+
+  const updated = new Date(updatedRaw);
+
+  if (Number.isNaN(updated.getTime())) {
+    return ' Updated ' + updatedRaw + '.';
+  }
+
+  return ' Updated ' + updated.toLocaleString('en-US', {
+    timeZone: 'America/New_York',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  }) + '.';
 }
-}
-throw lastError || new Error('Could not load weather-data.json');
-}
+
 async function loadWeather() {
-el('statusMsg').textContent = 'Loading weather data...';
-try {
-const result = await fetchWeatherData();
-const data = result.data;
-const observations = data.observations || {};
-let successful = 0;
-STATIONS.forEach(function(station) {
-if (displayStation(station, observations[station.stationId])) {
-successful++;
+  setText('statusMsg', 'Loading weather data...');
+
+  STATIONS.forEach(function(station) {
+    clearStation(station, 'loading');
+  });
+
+  try {
+    const result = await fetchWeatherData();
+    const data = result.data;
+
+    let successful = 0;
+
+    STATIONS.forEach(function(station) {
+      const obs = getObservationForStation(data, station.stationId);
+      if (displayStation(station, obs)) {
+        successful++;
+      }
+    });
+
+    if (successful === 0) {
+      setText(
+        'statusMsg',
+        'The weather-data.json file loaded from ' + result.path +
+        ', but the station readings were not found. Check that the JSON contains KFLOVIED224 and KMIMOUNT110.'
+      );
+      console.log('Loaded weather data, but no matching station observations were found:', data);
+      return;
+    }
+
+    setText(
+      'statusMsg',
+      successful + ' of ' + STATIONS.length + ' stations loaded from ' +
+      result.path + '.' + formatUpdatedAt(data)
+    );
+
+  } catch (error) {
+    console.error(error);
+
+    STATIONS.forEach(function(station) {
+      clearStation(station, 'unavailable');
+    });
+
+    setText(
+      'statusMsg',
+      'Could not load weather-data.json. Make sure the file exists, is in the expected weather folder, and contains valid JSON.'
+    );
+  }
 }
-});
-let updatedText = '';
-if (data.updatedAt) {
-const updated = new Date(data.updatedAt).toLocaleString('en-US', {
-timeZone: 'America/New_York',
-month: 'short',
-day: 'numeric',
-year: 'numeric',
-hour: 'numeric',
-minute: '2-digit'
-});
-updatedText = ' Updated ' + updated + '.';
-}
-el('statusMsg').textContent =
-successful + ' of ' + STATIONS.length + ' stations loaded from ' + result.path + '.' + updatedText;
-} catch (error) {
-console.error(error);
-el('statusMsg').textContent =
-'Could not load weather-data.json. Make sure it is saved at weather/weather-data.json and contains valid JSON.';
-}
-}
+
 loadWeather();
 setInterval(loadWeather, 300000);
-</script></body></html>
+</script>
+</body>
+</html>
