@@ -7,59 +7,155 @@
 <meta name="robots" content="noindex, nofollow">
 
 <style>
+:root {
+  --bg: #121212;
+  --card: #181818;
+  --card-soft: #1f1f1f;
+  --border: #333;
+  --border-soft: #292929;
+  --text: #e8e8e8;
+  --muted: #aaa;
+  --muted-2: #999;
+  --accent: #6cb4ff;
+  --accent-soft: #8cb4ff;
+  --ok: #7ee787;
+  --warn: #ffd166;
+  --bad: #ff8b8b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  background: #121212;
-  color: #e8e8e8;
+  background: var(--bg);
+  color: var(--text);
   padding: 24px;
 }
 
+header {
+  max-width: 1500px;
+  margin-bottom: 16px;
+}
+
 h1 {
-  font-size: 1.4rem;
+  font-size: 1.45rem;
   font-weight: 400;
   margin: 0 0 8px;
 }
 
 .intro {
-  max-width: 1000px;
-  color: #aaa;
-  font-size: 0.9rem;
+  color: var(--muted);
+  font-size: 0.92rem;
   line-height: 1.45;
-  margin: 0 0 20px;
+  margin: 0 0 16px;
+  max-width: 1050px;
+}
+
+.top-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+  gap: 12px;
+  max-width: 1500px;
+  margin-bottom: 16px;
+}
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.panel h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: #fff;
+}
+
+.panel p,
+.panel li {
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.42;
+}
+
+.panel p {
+  margin: 0;
+}
+
+.panel ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.status-top {
+  color: #fff;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.status-top strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  max-width: 1500px;
+  margin-bottom: 16px;
+}
+
+.guide-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 16px;
+}
+
+.guide-list div {
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.38;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
-  max-width: 1100px;
+  max-width: 1500px;
 }
 
 .station {
-  background: #181818;
-  border: 1px solid #333;
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 18px;
+  min-width: 0;
 }
 
 .station-title {
-  margin: 0 0 14px;
+  margin: 0 0 12px;
 }
 
-.station-title a {
+.station-title a,
+.station-title .no-link-title {
   display: block;
   text-decoration: none;
 }
 
 .station-title a:hover .station-location {
-  color: #8cb4ff;
+  color: var(--accent-soft);
 }
 
 .station-label {
   display: block;
-  font-size: 1.05rem;
-  color: #999;
+  font-size: 1.02rem;
+  color: var(--muted-2);
   margin-bottom: 4px;
   letter-spacing: 0.2px;
   line-height: 1.2;
@@ -67,7 +163,7 @@ h1 {
 
 .station-location {
   display: block;
-  font-size: 1.35rem;
+  font-size: 1.32rem;
   font-weight: 600;
   color: #fff;
   line-height: 1.2;
@@ -77,16 +173,50 @@ h1 {
 .station-id {
   display: block;
   margin-top: 4px;
-  font-size: 1.05rem;
-  color: #6cb4ff;
+  font-size: 0.98rem;
+  color: var(--accent);
   font-family: Consolas, Monaco, monospace;
+  overflow-wrap: anywhere;
 }
 
 .big-temp {
-  font-size: 2rem;
-  color: #6cb4ff;
-  margin: 8px 0 16px;
+  font-size: 1.85rem;
+  color: var(--accent);
+  margin: 8px 0 10px;
   font-weight: bold;
+  line-height: 1.15;
+}
+
+.card-summary {
+  min-height: 42px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.4;
+  margin: 0 0 12px;
+}
+
+.health {
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 5px 8px;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  color: var(--muted);
+  background: var(--card-soft);
+  font-size: 0.78rem;
+  line-height: 1;
+}
+
+.health.ok {
+  color: var(--ok);
+}
+
+.health.warn {
+  color: var(--warn);
+}
+
+.health.bad {
+  color: var(--bad);
 }
 
 .readings {
@@ -97,14 +227,14 @@ h1 {
 
 .readings th,
 .readings td {
-  border-bottom: 1px solid #292929;
+  border-bottom: 1px solid var(--border-soft);
   padding: 7px 0;
-  font-size: 0.88rem;
+  font-size: 0.84rem;
   vertical-align: top;
 }
 
 .readings th {
-  color: #999;
+  color: var(--muted-2);
   font-weight: 600;
   text-align: right;
 }
@@ -120,8 +250,8 @@ h1 {
 
 .readings td:first-child {
   text-align: left;
-  color: #999;
-  width: 38%;
+  color: var(--muted-2);
+  width: 36%;
 }
 
 .readings tr:last-child td {
@@ -131,40 +261,158 @@ h1 {
 .unit-note {
   margin-top: 14px;
   padding-top: 10px;
-  border-top: 1px solid #292929;
-  color: #aaa;
+  border-top: 1px solid var(--border-soft);
+  color: var(--muted);
   font-size: 0.82rem;
   line-height: 1.4;
 }
 
 #statusMsg {
+  max-width: 1500px;
   margin-top: 18px;
-  color: #aaa;
+  color: var(--muted);
   font-size: 0.85rem;
 }
 
-@media (max-width: 800px) {
-  body {
-    padding: 18px;
-  }
+.privacy-note {
+  max-width: 1500px;
+  margin-top: 10px;
+  color: #888;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
 
+@media (max-width: 1100px) {
   .grid {
     grid-template-columns: 1fr;
   }
 
-  .readings th,
+  .top-bar,
+  .guide-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .guide-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 18px;
+  }
+
+  .station {
+    padding: 16px;
+  }
+
+  .big-temp {
+    font-size: 1.6rem;
+  }
+
+  .readings thead {
+    display: none;
+  }
+
+  .readings,
+  .readings tbody,
+  .readings tr,
   .readings td {
-    font-size: 0.84rem;
+    display: block;
+    width: 100%;
+  }
+
+  .readings tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .readings tr:last-child {
+    border-bottom: none;
+  }
+
+  .readings td {
+    border-bottom: none;
+    text-align: left;
+    padding: 0;
+    font-size: 0.86rem;
+  }
+
+  .readings td:first-child {
+    grid-column: 1 / -1;
+    color: #fff;
+    font-weight: 600;
+    width: 100%;
+    margin-bottom: 2px;
+  }
+
+  .readings td:nth-child(2)::before {
+    content: "Imperial: ";
+    color: var(--muted-2);
+    font-weight: 400;
+  }
+
+  .readings td:nth-child(3)::before {
+    content: "Metric: ";
+    color: var(--muted-2);
+    font-weight: 400;
   }
 }
 </style>
 </head>
 
 <body>
-<h1>Weather Underground Personal Weather Stations</h1>
-<p class="intro">
-  Readings are shown in both Imperial and Metric when the conversion makes sense. This is meant to help connect familiar U.S. weather readings with Celsius, millimeters, kilometers per hour, and hectopascals.
-</p>
+<header>
+  <h1>Weather Underground Personal Weather Stations</h1>
+  <p class="intro">
+    Readings are shown in both Imperial and Metric when the conversion makes sense. This dashboard is meant to help connect familiar U.S. weather readings with Celsius, millimeters, kilometers per hour, meters per second, and hectopascals.
+  </p>
+</header>
+
+<div class="top-bar">
+  <section class="panel">
+    <h2>Dashboard status</h2>
+    <p class="status-top" id="topStatus">
+      Loading weather data...
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>Privacy note</h2>
+    <p>
+      This page asks search engines not to index it, but it is still a public page if someone has the direct URL. Avoid adding API keys, home details, travel schedules, or anything sensitive.
+    </p>
+  </section>
+</div>
+
+<div class="guide-grid">
+  <section class="panel">
+    <h2>Metric feel guide</h2>
+    <div class="guide-list">
+      <div>0°C = freezing</div>
+      <div>10°C = cool</div>
+      <div>20°C = comfortable</div>
+      <div>25°C = warm</div>
+      <div>30°C+ = hot</div>
+      <div>16°C dew point = getting humid</div>
+      <div>21°C+ dew point = very humid</div>
+      <div>25 mm+ rain = heavy daily rain</div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Korea weather intuition</h2>
+    <ul>
+      <li>Celsius is the everyday temperature frame.</li>
+      <li>Rain is usually discussed in millimeters.</li>
+      <li>Wind may appear as km/h or m/s, so both are shown.</li>
+      <li>Pressure is commonly shown in hPa.</li>
+    </ul>
+  </section>
+</div>
 
 <div class="grid">
 
@@ -178,6 +426,8 @@ h1 {
     </h2>
 
     <div class="big-temp" id="temp1Big">--</div>
+    <p class="card-summary" id="summary1">Loading...</p>
+    <span class="health" id="health1">Station status: loading</span>
 
     <table class="readings">
       <thead>
@@ -191,16 +441,16 @@ h1 {
         <tr><td>Temperature</td><td id="temp1Imp">--</td><td id="temp1Met">--</td></tr>
         <tr><td>Feels Like</td><td id="feels1Imp">--</td><td id="feels1Met">--</td></tr>
         <tr><td>Dew Point</td><td id="dewpt1Imp">--</td><td id="dewpt1Met">--</td></tr>
-        <tr><td>Humidity</td><td id="hum1Imp">--</td><td id="hum1Met">same</td></tr>
+        <tr><td>Humidity</td><td id="hum1Imp">--</td><td id="hum1Met">--</td></tr>
         <tr><td>Wind Speed</td><td id="wind1Imp">--</td><td id="wind1Met">--</td></tr>
         <tr><td>Wind Gust</td><td id="gust1Imp">--</td><td id="gust1Met">--</td></tr>
-        <tr><td>Wind Direction</td><td id="windDir1Imp">--</td><td id="windDir1Met">same</td></tr>
-        <tr><td>Rain Rate</td><td id="rainRate1Imp">--</td><td id="rainRate1Met">--</td></tr>
+        <tr><td>Wind Direction</td><td id="windDir1Imp">--</td><td id="windDir1Met">--</td></tr>
+        <tr><td>Rain Rate / Now</td><td id="rainRate1Imp">--</td><td id="rainRate1Met">--</td></tr>
         <tr><td>Rain Today</td><td id="rainToday1Imp">--</td><td id="rainToday1Met">--</td></tr>
         <tr><td>Pressure</td><td id="press1Imp">--</td><td id="press1Met">--</td></tr>
-        <tr><td>Solar Radiation</td><td id="solar1Imp">--</td><td id="solar1Met">same</td></tr>
-        <tr><td>UV</td><td id="uv1Imp">--</td><td id="uv1Met">same</td></tr>
-        <tr><td>Last Report</td><td id="time1Imp">--</td><td id="time1Met">same</td></tr>
+        <tr><td>Solar Radiation</td><td id="solar1Imp">--</td><td id="solar1Met">--</td></tr>
+        <tr><td>UV</td><td id="uv1Imp">--</td><td id="uv1Met">--</td></tr>
+        <tr><td>Last Report</td><td id="time1Imp">--</td><td id="time1Met">--</td></tr>
       </tbody>
     </table>
 
@@ -217,6 +467,8 @@ h1 {
     </h2>
 
     <div class="big-temp" id="temp2Big">--</div>
+    <p class="card-summary" id="summary2">Loading...</p>
+    <span class="health" id="health2">Station status: loading</span>
 
     <table class="readings">
       <thead>
@@ -230,93 +482,92 @@ h1 {
         <tr><td>Temperature</td><td id="temp2Imp">--</td><td id="temp2Met">--</td></tr>
         <tr><td>Feels Like</td><td id="feels2Imp">--</td><td id="feels2Met">--</td></tr>
         <tr><td>Dew Point</td><td id="dewpt2Imp">--</td><td id="dewpt2Met">--</td></tr>
-        <tr><td>Humidity</td><td id="hum2Imp">--</td><td id="hum2Met">same</td></tr>
+        <tr><td>Humidity</td><td id="hum2Imp">--</td><td id="hum2Met">--</td></tr>
         <tr><td>Wind Speed</td><td id="wind2Imp">--</td><td id="wind2Met">--</td></tr>
         <tr><td>Wind Gust</td><td id="gust2Imp">--</td><td id="gust2Met">--</td></tr>
-        <tr><td>Wind Direction</td><td id="windDir2Imp">--</td><td id="windDir2Met">same</td></tr>
-        <tr><td>Rain Rate</td><td id="rainRate2Imp">--</td><td id="rainRate2Met">--</td></tr>
+        <tr><td>Wind Direction</td><td id="windDir2Imp">--</td><td id="windDir2Met">--</td></tr>
+        <tr><td>Rain Rate / Now</td><td id="rainRate2Imp">--</td><td id="rainRate2Met">--</td></tr>
         <tr><td>Rain Today</td><td id="rainToday2Imp">--</td><td id="rainToday2Met">--</td></tr>
         <tr><td>Pressure</td><td id="press2Imp">--</td><td id="press2Met">--</td></tr>
-        <tr><td>Solar Radiation</td><td id="solar2Imp">--</td><td id="solar2Met">same</td></tr>
-        <tr><td>UV</td><td id="uv2Imp">--</td><td id="uv2Met">same</td></tr>
-        <tr><td>Last Report</td><td id="time2Imp">--</td><td id="time2Met">same</td></tr>
+        <tr><td>Solar Radiation</td><td id="solar2Imp">--</td><td id="solar2Met">--</td></tr>
+        <tr><td>UV</td><td id="uv2Imp">--</td><td id="uv2Met">--</td></tr>
+        <tr><td>Last Report</td><td id="time2Imp">--</td><td id="time2Met">--</td></tr>
       </tbody>
     </table>
 
     <div class="unit-note" id="note2">--</div>
   </section>
 
+  <section class="station" aria-label="Yadang-dong Paju South Korea weather">
+    <h2 class="station-title">
+      <span class="no-link-title">
+        <span class="station-label">야당동 주변</span>
+        <span class="station-location">Yadang-dong, Paju</span>
+        <span class="station-id">Approx. 37.713°N, 126.762°E</span>
+      </span>
+    </h2>
+
+    <div class="big-temp" id="temp3Big">--</div>
+    <p class="card-summary" id="summary3">Loading...</p>
+    <span class="health" id="health3">Station status: loading</span>
+
+    <table class="readings">
+      <thead>
+        <tr>
+          <th>Reading</th>
+          <th>Imperial</th>
+          <th>Metric</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Temperature</td><td id="temp3Imp">--</td><td id="temp3Met">--</td></tr>
+        <tr><td>Feels Like</td><td id="feels3Imp">--</td><td id="feels3Met">--</td></tr>
+        <tr><td>Dew Point</td><td id="dewpt3Imp">--</td><td id="dewpt3Met">--</td></tr>
+        <tr><td>Humidity</td><td id="hum3Imp">--</td><td id="hum3Met">--</td></tr>
+        <tr><td>Wind Speed</td><td id="wind3Imp">--</td><td id="wind3Met">--</td></tr>
+        <tr><td>Wind Gust</td><td id="gust3Imp">--</td><td id="gust3Met">--</td></tr>
+        <tr><td>Wind Direction</td><td id="windDir3Imp">--</td><td id="windDir3Met">--</td></tr>
+        <tr><td>Rain Rate / Now</td><td id="rainRate3Imp">--</td><td id="rainRate3Met">--</td></tr>
+        <tr><td>Rain Today</td><td id="rainToday3Imp">--</td><td id="rainToday3Met">--</td></tr>
+        <tr><td>Pressure</td><td id="press3Imp">--</td><td id="press3Met">--</td></tr>
+        <tr><td>Solar Radiation</td><td id="solar3Imp">--</td><td id="solar3Met">--</td></tr>
+        <tr><td>UV</td><td id="uv3Imp">--</td><td id="uv3Met">--</td></tr>
+        <tr><td>Last Report</td><td id="time3Imp">--</td><td id="time3Met">--</td></tr>
+      </tbody>
+    </table>
+
+    <div class="unit-note" id="note3">--</div>
+  </section>
+
 </div>
 
 <p id="statusMsg">Loading weather data...</p>
+<p class="privacy-note">
+  Search indexing is discouraged through a noindex meta tag. This is not password protection.
+</p>
 
 <script>
 const STATIONS = [
   {
+    type: 'pws',
     stationId: 'KFLOVIED224',
-    ids: {
-      tempBig: 'temp1Big',
-      tempImp: 'temp1Imp',
-      tempMet: 'temp1Met',
-      feelsImp: 'feels1Imp',
-      feelsMet: 'feels1Met',
-      dewptImp: 'dewpt1Imp',
-      dewptMet: 'dewpt1Met',
-      humImp: 'hum1Imp',
-      humMet: 'hum1Met',
-      windImp: 'wind1Imp',
-      windMet: 'wind1Met',
-      gustImp: 'gust1Imp',
-      gustMet: 'gust1Met',
-      windDirImp: 'windDir1Imp',
-      windDirMet: 'windDir1Met',
-      rainRateImp: 'rainRate1Imp',
-      rainRateMet: 'rainRate1Met',
-      rainTodayImp: 'rainToday1Imp',
-      rainTodayMet: 'rainToday1Met',
-      pressImp: 'press1Imp',
-      pressMet: 'press1Met',
-      solarImp: 'solar1Imp',
-      solarMet: 'solar1Met',
-      uvImp: 'uv1Imp',
-      uvMet: 'uv1Met',
-      timeImp: 'time1Imp',
-      timeMet: 'time1Met',
-      note: 'note1'
-    }
+    sourceName: 'Weather Underground / local JSON',
+    ids: makeIds('1')
   },
   {
+    type: 'pws',
     stationId: 'KMIMOUNT110',
-    ids: {
-      tempBig: 'temp2Big',
-      tempImp: 'temp2Imp',
-      tempMet: 'temp2Met',
-      feelsImp: 'feels2Imp',
-      feelsMet: 'feels2Met',
-      dewptImp: 'dewpt2Imp',
-      dewptMet: 'dewpt2Met',
-      humImp: 'hum2Imp',
-      humMet: 'hum2Met',
-      windImp: 'wind2Imp',
-      windMet: 'wind2Met',
-      gustImp: 'gust2Imp',
-      gustMet: 'gust2Met',
-      windDirImp: 'windDir2Imp',
-      windDirMet: 'windDir2Met',
-      rainRateImp: 'rainRate2Imp',
-      rainRateMet: 'rainRate2Met',
-      rainTodayImp: 'rainToday2Imp',
-      rainTodayMet: 'rainToday2Met',
-      pressImp: 'press2Imp',
-      pressMet: 'press2Met',
-      solarImp: 'solar2Imp',
-      solarMet: 'solar2Met',
-      uvImp: 'uv2Imp',
-      uvMet: 'uv2Met',
-      timeImp: 'time2Imp',
-      timeMet: 'time2Met',
-      note: 'note2'
-    }
+    sourceName: 'Weather Underground / local JSON',
+    ids: makeIds('2')
+  },
+  {
+    type: 'openMeteo',
+    stationId: 'YADANG_PAJU',
+    sourceName: 'Open-Meteo public weather',
+    latitude: 37.71297,
+    longitude: 126.76152,
+    timezone: 'Asia/Seoul',
+    ids: makeIds('3')
   }
 ];
 
@@ -327,6 +578,41 @@ const WEATHER_DATA_PATHS = [
   '/weather-data.json'
 ];
 
+function makeIds(n) {
+  return {
+    tempBig: 'temp' + n + 'Big',
+    summary: 'summary' + n,
+    health: 'health' + n,
+    tempImp: 'temp' + n + 'Imp',
+    tempMet: 'temp' + n + 'Met',
+    feelsImp: 'feels' + n + 'Imp',
+    feelsMet: 'feels' + n + 'Met',
+    dewptImp: 'dewpt' + n + 'Imp',
+    dewptMet: 'dewpt' + n + 'Met',
+    humImp: 'hum' + n + 'Imp',
+    humMet: 'hum' + n + 'Met',
+    windImp: 'wind' + n + 'Imp',
+    windMet: 'wind' + n + 'Met',
+    gustImp: 'gust' + n + 'Imp',
+    gustMet: 'gust' + n + 'Met',
+    windDirImp: 'windDir' + n + 'Imp',
+    windDirMet: 'windDir' + n + 'Met',
+    rainRateImp: 'rainRate' + n + 'Imp',
+    rainRateMet: 'rainRate' + n + 'Met',
+    rainTodayImp: 'rainToday' + n + 'Imp',
+    rainTodayMet: 'rainToday' + n + 'Met',
+    pressImp: 'press' + n + 'Imp',
+    pressMet: 'press' + n + 'Met',
+    solarImp: 'solar' + n + 'Imp',
+    solarMet: 'solar' + n + 'Met',
+    uvImp: 'uv' + n + 'Imp',
+    uvMet: 'uv' + n + 'Met',
+    timeImp: 'time' + n + 'Imp',
+    timeMet: 'time' + n + 'Met',
+    note: 'note' + n
+  };
+}
+
 function el(id) {
   return document.getElementById(id);
 }
@@ -334,6 +620,18 @@ function el(id) {
 function setText(id, value) {
   const node = el(id);
   if (node) node.textContent = value;
+}
+
+function setHealth(id, text, statusClass) {
+  const node = el(id);
+  if (!node) return;
+
+  node.textContent = text;
+  node.classList.remove('ok', 'warn', 'bad');
+
+  if (statusClass) {
+    node.classList.add(statusClass);
+  }
 }
 
 function hasValue(value) {
@@ -372,6 +670,10 @@ function mphToKph(mph) {
 
 function kphToMph(kph) {
   return kph / 1.609344;
+}
+
+function kphToMps(kph) {
+  return kph / 3.6;
 }
 
 function inchesToMm(inches) {
@@ -414,7 +716,9 @@ function displaySpeed(imperialValue, metricValue, decimals = 1) {
 
   return {
     imperial: mph === null ? '--' : round(mph, decimals) + ' mph',
-    metric: kph === null ? '--' : round(kph, decimals) + ' km/h'
+    metric: kph === null ? '--' : round(kph, decimals) + ' km/h / ' + round(kphToMps(kph), 1) + ' m/s',
+    mph,
+    kph
   };
 }
 
@@ -427,7 +731,9 @@ function displayRain(imperialValue, metricValue, imperialSuffix, metricSuffix, d
 
   return {
     imperial: inches === null ? '--' : round(inches, decimals) + imperialSuffix,
-    metric: mm === null ? '--' : round(mm, decimals) + metricSuffix
+    metric: mm === null ? '--' : round(mm, decimals) + metricSuffix,
+    inches,
+    mm
   };
 }
 
@@ -440,7 +746,9 @@ function displayPressure(imperialValue, metricValue) {
 
   return {
     imperial: inHg === null ? '--' : round(inHg, 2) + ' inHg',
-    metric: hpa === null ? '--' : round(hpa, 1) + ' hPa'
+    metric: hpa === null ? '--' : round(hpa, 1) + ' hPa',
+    inHg,
+    hpa
   };
 }
 
@@ -449,43 +757,37 @@ function showSame(value, suffix = '') {
   return value + suffix;
 }
 
-function showTime(obs) {
-  if (!obs) return '--';
+function parseObservationTime(obs) {
+  if (!obs) return null;
 
   const epochSeconds = firstValue(obs.epoch, obs.valid_time_gmt);
 
   if (hasValue(epochSeconds)) {
     const date = new Date(Number(epochSeconds) * 1000);
-    if (!Number.isNaN(date.getTime())) {
-      return date.toLocaleString('en-US', {
-        timeZone: 'America/New_York',
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit'
-      });
-    }
+    if (!Number.isNaN(date.getTime())) return date;
   }
 
   const timeText = firstValue(obs.obsTimeLocal, obs.obsTimeUtc, obs.time, obs.date);
+
   if (hasValue(timeText)) {
     const date = new Date(timeText);
-    if (!Number.isNaN(date.getTime())) {
-      return date.toLocaleString('en-US', {
-        timeZone: 'America/New_York',
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit'
-      });
-    }
-
-    return String(timeText);
+    if (!Number.isNaN(date.getTime())) return date;
   }
 
-  return '--';
+  return null;
+}
+
+function formatTime(date, timeZone) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return '--';
+
+  return date.toLocaleString('en-US', {
+    timeZone: timeZone || 'America/New_York',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  });
 }
 
 function windDirection(degrees) {
@@ -505,29 +807,101 @@ function windDirection(degrees) {
   return dirs[index] + ' (' + Math.round(n) + '°)';
 }
 
-function comfortNote(tempC, humidity, dewpointC) {
+function tempFeel(tempC) {
+  if (tempC === null || tempC === undefined) return null;
+  if (tempC < 0) return 'freezing';
+  if (tempC < 10) return 'cold';
+  if (tempC < 18) return 'cool';
+  if (tempC < 24) return 'comfortable';
+  if (tempC < 30) return 'warm';
+  return 'hot';
+}
+
+function humidityFeel(dewpointC, humidity) {
+  const dew = numberOrNull(dewpointC);
+  const hum = numberOrNull(humidity);
+
+  if (dew !== null) {
+    if (dew >= 24) return 'oppressive humidity';
+    if (dew >= 21) return 'very humid';
+    if (dew >= 16) return 'muggy';
+    if (dew <= 5) return 'dry';
+  }
+
+  if (hum !== null && hum >= 80) return 'humid';
+  if (hum !== null && hum <= 35) return 'dry';
+
+  return null;
+}
+
+function comfortNote(tempC, humidity, dewpointC, rainMm) {
   const parts = [];
 
-  if (tempC !== null && tempC !== undefined) {
-    if (tempC < 0) parts.push('Below 0°C is freezing.');
-    else if (tempC < 10) parts.push('Below 10°C usually feels cold.');
-    else if (tempC < 18) parts.push('10–18°C often feels cool.');
-    else if (tempC < 24) parts.push('18–24°C is often comfortable.');
-    else if (tempC < 30) parts.push('24–30°C feels warm.');
-    else parts.push('Above 30°C feels hot.');
+  const feel = tempFeel(tempC);
+  if (feel) parts.push('The Celsius reading should feel ' + feel + '.');
+
+  const humid = humidityFeel(dewpointC, humidity);
+  if (humid) parts.push('The humidity/dew point suggests ' + humid + ' air.');
+
+  const rain = numberOrNull(rainMm);
+  if (rain !== null) {
+    if (rain >= 25) parts.push('Daily rain over 25 mm is a heavy-rain signal.');
+    else if (rain >= 10) parts.push('Daily rain over 10 mm is noticeable rain.');
   }
 
-  const h = numberOrNull(humidity);
-  if (h !== null && h >= 70) {
-    parts.push('High humidity can make the air feel heavier.');
+  return parts.length ? parts.join(' ') : 'Metric readings are shown to help build an intuitive feel for Celsius, millimeters, km/h, m/s, and hPa.';
+}
+
+function summarySentence(tempC, humidity, dewpointC, windKph, rainMm) {
+  const pieces = [];
+
+  const feel = tempFeel(tempC);
+  if (feel) pieces.push('Feels ' + feel);
+
+  const humid = humidityFeel(dewpointC, humidity);
+  if (humid) pieces.push(humid);
+
+  const wind = numberOrNull(windKph);
+  if (wind !== null) {
+    if (wind >= 40) pieces.push('very windy');
+    else if (wind >= 25) pieces.push('breezy');
+    else if (wind <= 5) pieces.push('calm wind');
   }
 
-  if (dewpointC !== null && dewpointC !== undefined) {
-    if (dewpointC >= 21) parts.push('A dew point above 21°C usually feels very humid.');
-    else if (dewpointC >= 16) parts.push('A dew point around 16–20°C can start to feel muggy.');
+  const rain = numberOrNull(rainMm);
+  if (rain !== null && rain > 0) {
+    pieces.push(rain >= 10 ? 'rainy today' : 'some rain today');
   }
 
-  return parts.length ? parts.join(' ') : 'Metric readings are shown to help build an intuitive feel for Celsius, millimeters, kilometers per hour, and hectopascals.';
+  return pieces.length ? pieces.join(' · ') : 'Current weather summary unavailable';
+}
+
+function ageHealth(date, externalSource) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+    return {
+      text: externalSource ? 'Source status: loaded' : 'Station status: time unavailable',
+      statusClass: externalSource ? 'ok' : 'warn'
+    };
+  }
+
+  const ageMinutes = (Date.now() - date.getTime()) / 60000;
+
+  if (externalSource) {
+    if (ageMinutes <= 90) {
+      return { text: 'Source status: current public weather loaded', statusClass: 'ok' };
+    }
+    return { text: 'Source status: public weather may be stale', statusClass: 'warn' };
+  }
+
+  if (ageMinutes <= 30) {
+    return { text: 'Station status: reporting normally', statusClass: 'ok' };
+  }
+
+  if (ageMinutes <= 120) {
+    return { text: 'Station status: recent, but not live', statusClass: 'warn' };
+  }
+
+  return { text: 'Station status: last report is stale', statusClass: 'bad' };
 }
 
 function clearStation(station, message = 'unavailable') {
@@ -537,14 +911,10 @@ function clearStation(station, message = 'unavailable') {
     setText(ids[key], '--');
   });
 
-  setText(ids.tempBig, '--');
+  setText(ids.summary, message);
+  setHealth(ids.health, 'Station status: ' + message, 'warn');
   setText(ids.tempImp, message);
   setText(ids.tempMet, message);
-  setText(ids.humMet, 'same');
-  setText(ids.windDirMet, 'same');
-  setText(ids.solarMet, 'same');
-  setText(ids.uvMet, 'same');
-  setText(ids.timeMet, 'same');
 }
 
 function getObservationForStation(data, stationId) {
@@ -597,73 +967,28 @@ function getObservationForStation(data, stationId) {
   return null;
 }
 
-function displayStation(station, obs) {
+function displayNormalizedStation(station, normalized) {
   const ids = station.ids;
 
-  if (!obs) {
+  if (!normalized) {
     clearStation(station, 'station not found');
     return false;
   }
 
-  const imperial = obs.imperial || {};
-  const metric = obs.metric || {};
+  const temp = displayTemperature(normalized.tempF, normalized.tempC, 1);
+  const feels = displayTemperature(normalized.feelsF, normalized.feelsC, 1);
+  const dewpt = displayTemperature(normalized.dewpointF, normalized.dewpointC, 1);
+  const wind = displaySpeed(normalized.windMph, normalized.windKph, 1);
+  const gust = displaySpeed(normalized.gustMph, normalized.gustKph, 1);
+  const rainRate = displayRain(normalized.rainRateIn, normalized.rainRateMm, ' in/hr', ' mm/hr', 2);
+  const rainTotal = displayRain(normalized.rainTodayIn, normalized.rainTodayMm, ' in', ' mm', 2);
+  const pressure = displayPressure(normalized.pressureInHg, normalized.pressureHpa);
 
-  const temp = displayTemperature(
-    firstValue(imperial.temp, obs.tempf, obs.tempF, obs.temperatureF),
-    firstValue(metric.temp, obs.tempc, obs.tempC, obs.temperatureC),
-    1
-  );
-
-  const feels = displayTemperature(
-    firstValue(imperial.heatIndex, imperial.windChill, imperial.feelsLike, obs.heatIndexf, obs.windchillf, obs.feelsLikeF, temp.f),
-    firstValue(metric.heatIndex, metric.windChill, metric.feelsLike, obs.heatIndexc, obs.windchillc, obs.feelsLikeC, temp.c),
-    1
-  );
-
-  const dewpt = displayTemperature(
-    firstValue(imperial.dewpt, obs.dewptf, obs.dewPointF),
-    firstValue(metric.dewpt, obs.dewptc, obs.dewPointC),
-    1
-  );
-
-  const wind = displaySpeed(
-    firstValue(imperial.windSpeed, obs.windspeedmph),
-    firstValue(metric.windSpeed, obs.windspeedkph),
-    1
-  );
-
-  const gust = displaySpeed(
-    firstValue(imperial.windGust, obs.windgustmph),
-    firstValue(metric.windGust, obs.windgustkph),
-    1
-  );
-
-  const rainRate = displayRain(
-    firstValue(imperial.precipRate, obs.precipRate, obs.rainRateIn),
-    firstValue(metric.precipRate, obs.precipRateMetric, obs.rainRateMm),
-    ' in/hr',
-    ' mm/hr',
-    2
-  );
-
-  const rainTotal = displayRain(
-    firstValue(imperial.precipTotal, obs.precipTotal, obs.rainTodayIn),
-    firstValue(metric.precipTotal, obs.precipTotalMetric, obs.rainTodayMm),
-    ' in',
-    ' mm',
-    2
-  );
-
-  const pressure = displayPressure(
-    firstValue(imperial.pressure, obs.pressureIn),
-    firstValue(metric.pressure, obs.pressureMb, obs.pressureHPa, obs.pressureHpa)
-  );
-
-  const humidity = showSame(firstValue(obs.humidity, obs.hum), '%');
-  const windDir = windDirection(firstValue(obs.winddir, obs.windDir, obs.windDirection));
-  const solar = showSame(firstValue(obs.solarRadiation, obs.solarradiation), ' W/m²');
-  const uv = showSame(firstValue(obs.uv, obs.UV));
-  const time = showTime(obs);
+  const humidity = showSame(normalized.humidity, '%');
+  const windDir = windDirection(normalized.windDirection);
+  const solar = showSame(normalized.solarRadiation, ' W/m²');
+  const uv = showSame(normalized.uv);
+  const time = formatTime(normalized.reportTime, normalized.timeZone);
 
   setText(ids.tempBig, temp.imperial + ' / ' + temp.metric);
   setText(ids.tempImp, temp.imperial);
@@ -692,9 +1017,67 @@ function displayStation(station, obs) {
   setText(ids.uvMet, uv);
   setText(ids.timeImp, time);
   setText(ids.timeMet, time);
-  setText(ids.note, comfortNote(temp.c, firstValue(obs.humidity, obs.hum), dewpt.c));
+
+  setText(
+    ids.summary,
+    summarySentence(temp.c, normalized.humidity, dewpt.c, wind.kph, rainTotal.mm)
+  );
+
+  setText(
+    ids.note,
+    comfortNote(temp.c, normalized.humidity, dewpt.c, rainTotal.mm)
+  );
+
+  const health = ageHealth(normalized.reportTime, normalized.externalSource);
+  setHealth(ids.health, health.text, health.statusClass);
 
   return true;
+}
+
+function normalizePwsObservation(obs) {
+  if (!obs) return null;
+
+  const imperial = obs.imperial || {};
+  const metric = obs.metric || {};
+
+  const reportTime = parseObservationTime(obs);
+
+  return {
+    tempF: firstValue(imperial.temp, obs.tempf, obs.tempF, obs.temperatureF),
+    tempC: firstValue(metric.temp, obs.tempc, obs.tempC, obs.temperatureC),
+
+    feelsF: firstValue(imperial.heatIndex, imperial.windChill, imperial.feelsLike, obs.heatIndexf, obs.windchillf, obs.feelsLikeF),
+    feelsC: firstValue(metric.heatIndex, metric.windChill, metric.feelsLike, obs.heatIndexc, obs.windchillc, obs.feelsLikeC),
+
+    dewpointF: firstValue(imperial.dewpt, obs.dewptf, obs.dewPointF),
+    dewpointC: firstValue(metric.dewpt, obs.dewptc, obs.dewPointC),
+
+    humidity: firstValue(obs.humidity, obs.hum),
+
+    windMph: firstValue(imperial.windSpeed, obs.windspeedmph),
+    windKph: firstValue(metric.windSpeed, obs.windspeedkph),
+
+    gustMph: firstValue(imperial.windGust, obs.windgustmph),
+    gustKph: firstValue(metric.windGust, obs.windgustkph),
+
+    windDirection: firstValue(obs.winddir, obs.windDir, obs.windDirection),
+
+    rainRateIn: firstValue(imperial.precipRate, obs.precipRate, obs.rainRateIn),
+    rainRateMm: firstValue(metric.precipRate, obs.precipRateMetric, obs.rainRateMm),
+
+    rainTodayIn: firstValue(imperial.precipTotal, obs.precipTotal, obs.rainTodayIn),
+    rainTodayMm: firstValue(metric.precipTotal, obs.precipTotalMetric, obs.rainTodayMm),
+
+    pressureInHg: firstValue(imperial.pressure, obs.pressureIn),
+    pressureHpa: firstValue(metric.pressure, obs.pressureMb, obs.pressureHPa, obs.pressureHpa),
+
+    solarRadiation: firstValue(obs.solarRadiation, obs.solarradiation),
+    uv: firstValue(obs.uv, obs.UV),
+
+    reportTime,
+    timeZone: 'America/New_York',
+    externalSource: false
+  };
 }
 
 async function fetchWeatherData() {
@@ -721,6 +1104,68 @@ async function fetchWeatherData() {
   throw lastError || new Error('Could not load weather-data.json');
 }
 
+async function fetchOpenMeteo(station) {
+  const params = new URLSearchParams({
+    latitude: String(station.latitude),
+    longitude: String(station.longitude),
+    current: [
+      'temperature_2m',
+      'relative_humidity_2m',
+      'apparent_temperature',
+      'dew_point_2m',
+      'precipitation',
+      'pressure_msl',
+      'wind_speed_10m',
+      'wind_direction_10m',
+      'wind_gusts_10m',
+      'shortwave_radiation'
+    ].join(','),
+    daily: [
+      'precipitation_sum',
+      'uv_index_max'
+    ].join(','),
+    timezone: station.timezone,
+    wind_speed_unit: 'kmh',
+    temperature_unit: 'celsius',
+    precipitation_unit: 'mm'
+  });
+
+  const url = 'https://api.open-meteo.com/v1/forecast?' + params.toString();
+  const response = await fetch(url, { cache: 'no-store' });
+
+  if (!response.ok) {
+    throw new Error('Open-Meteo returned HTTP ' + response.status);
+  }
+
+  const data = await response.json();
+  const current = data.current || {};
+  const daily = data.daily || {};
+
+  const reportTime = current.time ? new Date(current.time) : new Date();
+
+  return {
+    tempC: current.temperature_2m,
+    feelsC: current.apparent_temperature,
+    dewpointC: current.dew_point_2m,
+    humidity: current.relative_humidity_2m,
+
+    windKph: current.wind_speed_10m,
+    gustKph: current.wind_gusts_10m,
+    windDirection: current.wind_direction_10m,
+
+    rainRateMm: current.precipitation,
+    rainTodayMm: Array.isArray(daily.precipitation_sum) ? daily.precipitation_sum[0] : null,
+
+    pressureHpa: current.pressure_msl,
+    solarRadiation: current.shortwave_radiation,
+    uv: Array.isArray(daily.uv_index_max) ? daily.uv_index_max[0] : null,
+
+    reportTime,
+    timeZone: station.timezone,
+    externalSource: true
+  };
+}
+
 function formatUpdatedAt(data) {
   const updatedRaw = firstValue(data.updatedAt, data.generatedAt, data.lastUpdated);
 
@@ -729,67 +1174,80 @@ function formatUpdatedAt(data) {
   const updated = new Date(updatedRaw);
 
   if (Number.isNaN(updated.getTime())) {
-    return ' Updated ' + updatedRaw + '.';
+    return ' Local JSON updated ' + updatedRaw + '.';
   }
 
-  return ' Updated ' + updated.toLocaleString('en-US', {
-    timeZone: 'America/New_York',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit'
-  }) + '.';
+  return ' Local JSON updated ' + formatTime(updated, 'America/New_York') + '.';
+}
+
+function updateTopStatus(successful, total, sourceText) {
+  const now = new Date();
+  setText(
+    'topStatus',
+    successful + ' of ' + total + ' locations loaded. Page refreshed ' +
+    formatTime(now, 'America/New_York') + '. ' + sourceText
+  );
 }
 
 async function loadWeather() {
+  setText('topStatus', 'Loading weather data...');
   setText('statusMsg', 'Loading weather data...');
 
   STATIONS.forEach(function(station) {
     clearStation(station, 'loading');
   });
 
+  let successful = 0;
+  let sourceMessages = [];
+
   try {
-    const result = await fetchWeatherData();
-    const data = result.data;
+    const pwsResult = await fetchWeatherData();
+    const data = pwsResult.data;
 
-    let successful = 0;
+    STATIONS.filter(function(station) {
+      return station.type === 'pws';
+    }).forEach(function(station) {
+      const rawObs = getObservationForStation(data, station.stationId);
+      const normalized = normalizePwsObservation(rawObs);
 
-    STATIONS.forEach(function(station) {
-      const obs = getObservationForStation(data, station.stationId);
-      if (displayStation(station, obs)) {
+      if (displayNormalizedStation(station, normalized)) {
         successful++;
       }
     });
 
-    if (successful === 0) {
-      setText(
-        'statusMsg',
-        'The weather-data.json file loaded from ' + result.path +
-        ', but the station readings were not found. Check that the JSON contains KFLOVIED224 and KMIMOUNT110.'
-      );
-      console.log('Loaded weather data, but no matching station observations were found:', data);
-      return;
-    }
-
-    setText(
-      'statusMsg',
-      successful + ' of ' + STATIONS.length + ' stations loaded from ' +
-      result.path + '.' + formatUpdatedAt(data)
-    );
-
+    sourceMessages.push('Personal stations loaded from ' + pwsResult.path + '.' + formatUpdatedAt(data));
   } catch (error) {
     console.error(error);
 
-    STATIONS.forEach(function(station) {
+    STATIONS.filter(function(station) {
+      return station.type === 'pws';
+    }).forEach(function(station) {
       clearStation(station, 'unavailable');
     });
 
-    setText(
-      'statusMsg',
-      'Could not load weather-data.json. Make sure the file exists, is in the expected weather folder, and contains valid JSON.'
-    );
+    sourceMessages.push('Personal station JSON could not be loaded.');
   }
+
+  for (const station of STATIONS.filter(function(station) {
+    return station.type === 'openMeteo';
+  })) {
+    try {
+      const normalized = await fetchOpenMeteo(station);
+
+      if (displayNormalizedStation(station, normalized)) {
+        successful++;
+      }
+
+      sourceMessages.push('Yadang/Paju neighborhood weather loaded from Open-Meteo.');
+    } catch (error) {
+      console.error(error);
+      clearStation(station, 'unavailable');
+      sourceMessages.push('Yadang/Paju public weather could not be loaded.');
+    }
+  }
+
+  updateTopStatus(successful, STATIONS.length, sourceMessages.join(' '));
+  setText('statusMsg', successful + ' of ' + STATIONS.length + ' locations loaded. ' + sourceMessages.join(' '));
 }
 
 loadWeather();
