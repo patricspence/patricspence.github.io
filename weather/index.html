@@ -256,7 +256,7 @@ h1 {
 .readings td:first-child {
   text-align: left;
   color: var(--muted-2);
-  width: 36%;
+  width: 34%;
 }
 
 .readings tr:last-child td {
@@ -757,6 +757,20 @@ function showSame(value, suffix = '') {
   return value + suffix;
 }
 
+function withKoreanLabel(value, koreanLabel) {
+  if (
+    !hasValue(value) ||
+    value === '--' ||
+    value === 'loading' ||
+    value === 'unavailable' ||
+    value === 'station not found'
+  ) {
+    return value;
+  }
+
+  return value + ' ' + koreanLabel;
+}
+
 function parseObservationTime(obs) {
   if (!obs) return null;
 
@@ -992,31 +1006,31 @@ function displayNormalizedStation(station, normalized) {
 
   setText(ids.tempBig, temp.imperial + ' / ' + temp.metric);
   setText(ids.tempImp, temp.imperial);
-  setText(ids.tempMet, temp.metric);
+  setText(ids.tempMet, withKoreanLabel(temp.metric, '기온'));
   setText(ids.feelsImp, feels.imperial);
-  setText(ids.feelsMet, feels.metric);
+  setText(ids.feelsMet, withKoreanLabel(feels.metric, '체감온도'));
   setText(ids.dewptImp, dewpt.imperial);
-  setText(ids.dewptMet, dewpt.metric);
+  setText(ids.dewptMet, withKoreanLabel(dewpt.metric, '이슬점'));
   setText(ids.humImp, humidity);
-  setText(ids.humMet, humidity);
+  setText(ids.humMet, withKoreanLabel(humidity, '습도'));
   setText(ids.windImp, wind.imperial);
-  setText(ids.windMet, wind.metric);
+  setText(ids.windMet, withKoreanLabel(wind.metric, '풍속'));
   setText(ids.gustImp, gust.imperial);
-  setText(ids.gustMet, gust.metric);
+  setText(ids.gustMet, withKoreanLabel(gust.metric, '순간풍속'));
   setText(ids.windDirImp, windDir);
-  setText(ids.windDirMet, windDir);
+  setText(ids.windDirMet, withKoreanLabel(windDir, '풍향'));
   setText(ids.rainRateImp, rainRate.imperial);
-  setText(ids.rainRateMet, rainRate.metric);
+  setText(ids.rainRateMet, withKoreanLabel(rainRate.metric, '시간당 강수량'));
   setText(ids.rainTodayImp, rainTotal.imperial);
-  setText(ids.rainTodayMet, rainTotal.metric);
+  setText(ids.rainTodayMet, withKoreanLabel(rainTotal.metric, '일강수량'));
   setText(ids.pressImp, pressure.imperial);
-  setText(ids.pressMet, pressure.metric);
+  setText(ids.pressMet, withKoreanLabel(pressure.metric, '기압'));
   setText(ids.solarImp, solar);
-  setText(ids.solarMet, solar);
+  setText(ids.solarMet, withKoreanLabel(solar, '일사량'));
   setText(ids.uvImp, uv);
-  setText(ids.uvMet, uv);
+  setText(ids.uvMet, withKoreanLabel(uv, '자외선 지수'));
   setText(ids.timeImp, time);
-  setText(ids.timeMet, time);
+  setText(ids.timeMet, withKoreanLabel(time, '관측 시간'));
 
   setText(
     ids.summary,
