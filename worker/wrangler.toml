@@ -6,7 +6,7 @@ compatibility_date = "2026-08-08"
 [[d1_databases]]
 binding = "ANALYTICS"
 database_name = "patricspence-analytics"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "c58af7ec-35ed-4fd9-9e0b-e6b24ffe555d"
 
 # Set the secret outside this file:
 # npx wrangler secret put IP_HASH_SALT
