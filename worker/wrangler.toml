@@ -1,0 +1,12 @@
+name = "patricspence-analytics"
+main = "src/index.js"
+compatibility_date = "2026-08-08"
+
+# Create a D1 database, then replace database_id below.
+[[d1_databases]]
+binding = "ANALYTICS"
+database_name = "patricspence-analytics"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+# Set the secret outside this file:
+# npx wrangler secret put IP_HASH_SALT
