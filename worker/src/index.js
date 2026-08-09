@@ -6,7 +6,17 @@ export default {
     if (url.pathname === '/analytics/api/summary') return summary(url, env);
     if (url.pathname.startsWith('/analytics/')) return fetch(new URL(url.pathname + url.search, ORIGIN));
 
-    const response = await fetch(new URL(url.pathname + url.search, ORIGIN), request);
+    const originUrl = new URL(url.pathname + url.search, ORIGIN);
+    const originHeaders = new Headers(request.headers);
+    originHeaders.set('host', originUrl.hostname);
+    originHeaders.delete('cf-connecting-ip');
+    const originRequest = new Request(originUrl, {
+      method: request.method,
+      headers: originHeaders,
+      body: (request.method === 'GET' || request.method === 'HEAD') ? undefined : request.body,
+      redirect: 'follow'
+    });
+    const response = await fetch(originRequest);
     const type = response.headers.get('content-type') || '';
     if (request.method === 'GET' && type.includes('text/html')) ctx.waitUntil(record(request, env));
     return response;
