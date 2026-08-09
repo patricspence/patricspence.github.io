@@ -13,6 +13,7 @@
     <p class="muted">Privacy-conscious site activity. IP addresses are not displayed or retained; unique visitors are estimated using a rotating daily hash.</p>
     <div class="toolbar"><label>From <input id="from" type="date"></label><label>To <input id="to" type="date"></label><button id="refresh">Refresh</button></div>
     <div class="cards"><div class="card"><div class="muted">Page views</div><div class="value" id="views">—</div></div><div class="card"><div class="muted">Estimated unique visitors</div><div class="value" id="visitors">—</div></div><div class="card"><div class="muted">Countries</div><div class="value" id="countries">—</div></div></div>
+    <section style="margin-bottom:20px"><h2>Views per day</h2><div id="dailyChart" style="display:flex;align-items:flex-end;gap:4px;height:140px"></div></section>
     <div class="grid"><section><h2>Top referrers</h2><table id="referrers"><thead><tr><th>Source</th><th>Views</th></tr></thead><tbody></tbody></table></section><section><h2>Landing pages</h2><table id="pages"><thead><tr><th>Page</th><th>Views</th></tr></thead><tbody></tbody></table></section><section><h2>Countries</h2><table id="countryTable"><thead><tr><th>Country</th><th>Views</th></tr></thead><tbody></tbody></table></section><section><h2>Browser types</h2><table id="browsers"><thead><tr><th>Type</th><th>Views</th></tr></thead><tbody></tbody></table></section></div>
   </main>
   <script>
@@ -20,7 +21,8 @@
     from.value=iso(week);to.value=iso(today);
     const put=(id,rows)=>document.querySelector('#'+id+' tbody').innerHTML=rows.map(r=>`<tr><td>${escapeHtml(r.label||'Direct / unknown')}</td><td>${r.count}</td></tr>`).join('');
     const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    async function load(){const q=new URLSearchParams({from:from.value,to:to.value});const r=await fetch('/analytics/api/summary?'+q);if(!r.ok)throw new Error('Analytics request failed ('+r.status+')');const d=await r.json();views.textContent=d.totals.views;visitors.textContent=d.totals.visitors;countries.textContent=d.totals.countries;put('referrers',d.referrers);put('pages',d.pages);put('countryTable',d.countries);put('browsers',d.browsers)}
+    function drawDaily(rows){const max=Math.max(1,...rows.map(r=>r.count));dailyChart.innerHTML=rows.map(r=>{const h=Math.round((r.count/max)*120)+8;return `<div title="${escapeHtml(r.day)}: ${r.count} views" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:100%;background:#163b65;border-radius:3px 3px 0 0;height:${h}px"></div><div style="font-size:.68rem;color:#5b6575;writing-mode:vertical-rl;text-orientation:mixed;height:34px">${escapeHtml(r.day.slice(5))}</div></div>`}).join('')}
+    async function load(){const q=new URLSearchParams({from:from.value,to:to.value});const r=await fetch('/analytics/api/summary?'+q);if(!r.ok)throw new Error('Analytics request failed ('+r.status+')');const d=await r.json();views.textContent=d.totals.views;visitors.textContent=d.totals.visitors;countries.textContent=d.totals.countries;put('referrers',d.referrers);put('pages',d.pages);put('countryTable',d.countries);put('browsers',d.browsers);drawDaily(d.daily||[])}
     refresh.onclick=()=>load().catch(e=>alert(e.message));load().catch(e=>alert(e.message));
   </script>
 </body>
