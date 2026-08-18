@@ -5,26 +5,552 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <title>Site analytics</title>
-  <style>body{font:16px system-ui,sans-serif;margin:0;background:#f5f7fa;color:#172033}main{max-width:1100px;margin:40px auto;padding:0 20px}h1{margin-bottom:4px}.muted{color:#5b6575}.toolbar{display:flex;gap:12px;align-items:center;margin:26px 0}.toolbar input,.toolbar button{padding:9px 12px;font:inherit;border:1px solid #c8d0dc;border-radius:6px}.toolbar button{background:#163b65;color:#fff;cursor:pointer}.cards,.grid{display:grid;gap:16px}.cards{grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:20px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.card,section{background:#fff;border:1px solid #dde3eb;border-radius:9px;padding:18px}.value{font-size:2rem;font-weight:700}table{width:100%;border-collapse:collapse}td,th{padding:8px;text-align:left;border-bottom:1px solid #e8ebef}th{color:#5b6575;font-size:.82rem;text-transform:uppercase}@media(max-width:700px){.cards,.grid{grid-template-columns:1fr}}</style>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #4d5768;
+      --line: #dde3eb;
+      --rule: #e8ebef;
+      --accent: #163b65;
+      --accent-soft: #7f96b3;
+      --bg: #f5f7fa;
+      --up: #1c6b3f;
+      --down: #9a2c2c;
+    }
+    * { box-sizing: border-box; }
+    body { font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0; background: var(--bg); color: var(--ink); }
+    main { max-width: 1100px; margin: 40px auto 80px; padding: 0 20px; }
+    h1 { margin: 0 0 4px; font-size: 1.9rem; }
+    h2 { font-size: 1.05rem; margin: 0 0 12px; }
+    h3 { font-size: .92rem; margin: 18px 0 8px; color: var(--muted); }
+    .muted { color: var(--muted); }
+    .lede { max-width: 68ch; }
+    a { color: var(--accent); }
+
+    .toolbar { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin: 26px 0 20px; }
+    .field { display: flex; flex-direction: column; gap: 4px; font-size: .82rem; color: var(--muted); }
+    input, button, select { padding: 9px 12px; font: inherit; border: 1px solid #c8d0dc; border-radius: 6px; background: #fff; color: var(--ink); }
+    button { background: var(--accent); color: #fff; cursor: pointer; border-color: var(--accent); }
+    button.secondary { background: #fff; color: var(--accent); }
+    button:hover { filter: brightness(1.08); }
+    :focus-visible { outline: 3px solid #2f6fb5; outline-offset: 2px; }
+
+    .cards { display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 20px; }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card, section.panel { background: #fff; border: 1px solid var(--line); border-radius: 9px; padding: 18px; }
+    .card .label { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+    .value { font-size: 1.9rem; font-weight: 700; line-height: 1.2; margin-top: 4px; }
+    .delta { font-size: .82rem; color: var(--muted); }
+    .delta .up { color: var(--up); font-weight: 600; }
+    .delta .down { color: var(--down); font-weight: 600; }
+    .full { grid-column: 1 / -1; }
+
+    table { width: 100%; border-collapse: collapse; }
+    caption { text-align: left; font-size: .82rem; color: var(--muted); padding-bottom: 8px; }
+    td, th { padding: 8px; text-align: left; border-bottom: 1px solid var(--rule); vertical-align: top; }
+    th { color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    th button.sort { all: unset; cursor: pointer; font: inherit; color: inherit; display: inline-flex; gap: 4px; align-items: center; }
+    th button.sort:focus-visible { outline: 3px solid #2f6fb5; outline-offset: 2px; }
+
+    .chart { display: flex; align-items: flex-end; gap: 4px; height: 150px; }
+    .bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+    .bar-stack { width: 100%; display: flex; flex-direction: column; justify-content: flex-end; height: 120px; }
+    .bar-human { background: var(--accent); border-radius: 3px 3px 0 0; }
+    .bar-bot { background: var(--accent-soft); background-image: repeating-linear-gradient(45deg, rgba(255,255,255,.55) 0 3px, transparent 3px 6px); }
+    .bar-empty { background: var(--rule); height: 2px; }
+    .bar-label { font-size: .66rem; color: var(--muted); writing-mode: vertical-rl; text-orientation: mixed; height: 36px; }
+    .legend { display: flex; gap: 16px; font-size: .8rem; color: var(--muted); margin-top: 10px; flex-wrap: wrap; }
+    .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+    details { margin-top: 12px; }
+    details > summary { cursor: pointer; font-weight: 600; font-size: .9rem; }
+    details[open] > summary { margin-bottom: 10px; }
+    .scroll { max-height: 300px; overflow: auto; }
+    .status { margin: 12px 0; font-size: .9rem; }
+    .status[data-kind="error"] { color: var(--down); font-weight: 600; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    @media (max-width: 900px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 700px) { .cards, .grid { grid-template-columns: 1fr; } }
+  </style>
 </head>
 <body>
-  <main>
-    <h1>Traffic analytics</h1>
-    <p class="muted">Privacy-conscious site activity. IP addresses are not displayed or retained; unique visitors are estimated using a rotating daily hash.</p>
-    <div class="toolbar"><label>From <input id="from" type="date"></label><label>To <input id="to" type="date"></label><button id="refresh">Refresh</button></div>
-    <div class="cards"><div class="card"><div class="muted">Page views</div><div class="value" id="views">—</div></div><div class="card"><div class="muted">Estimated unique visitors</div><div class="value" id="visitors">—</div></div><div class="card"><div class="muted">Countries</div><div class="value" id="countries">—</div></div></div>
-    <section style="margin-bottom:20px"><h2>Views per day</h2><div id="dailyChart" style="display:flex;align-items:flex-end;gap:4px;height:140px"></div></section>
-    <div class="grid"><section><h2>Top referrers</h2><table id="referrers"><thead><tr><th>Source</th><th>Views</th></tr></thead><tbody></tbody></table></section><section><h2>Landing pages</h2><table id="pages"><thead><tr><th>Page</th><th>Views</th></tr></thead><tbody></tbody></table></section><section><h2>Countries</h2><table id="countryTable"><thead><tr><th>Country</th><th>Views</th></tr></thead><tbody></tbody></table></section><section><h2>Browser types</h2><table id="browsers"><thead><tr><th>Type</th><th>Views</th></tr></thead><tbody></tbody></table></section></div>
-  </main>
-  <script>
-    const iso=d=>d.toISOString().slice(0,10),today=new Date(),week=new Date(Date.now()-6*864e5);
-    from.value=iso(week);to.value=iso(today);
-    const put=(id,rows)=>document.querySelector('#'+id+' tbody').innerHTML=rows.map(r=>`<tr><td>${escapeHtml(r.label||'Direct / unknown')}</td><td>${r.count}</td></tr>`).join('');
-    const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    function daysBetween(fromStr,toStr){const out=[];let d=new Date(fromStr+'T00:00:00Z');const end=new Date(toStr+'T00:00:00Z');while(d<=end){out.push(d.toISOString().slice(0,10));d.setUTCDate(d.getUTCDate()+1)}return out}
-    function drawDaily(rows){const map=Object.fromEntries(rows.map(r=>[r.day,r.count]));const data=daysBetween(from.value,to.value).map(day=>({day,count:map[day]||0}));const max=Math.max(1,...data.map(r=>r.count));dailyChart.innerHTML=data.map(r=>{const h=r.count?Math.round((r.count/max)*120)+8:2;return `<div title="${escapeHtml(r.day)}: ${r.count} views" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:100%;background:${r.count?'#163b65':'#dde3eb'};border-radius:3px 3px 0 0;height:${h}px"></div><div style="font-size:.68rem;color:#5b6575;writing-mode:vertical-rl;text-orientation:mixed;height:34px">${escapeHtml(r.day.slice(5))}</div></div>`}).join('')}
-    async function load(){const q=new URLSearchParams({from:from.value,to:to.value});const r=await fetch('/analytics/api/summary?'+q);if(!r.ok)throw new Error('Analytics request failed ('+r.status+')');const d=await r.json();views.textContent=d.totals.views;visitors.textContent=d.totals.visitors;countries.textContent=d.totals.countries;put('referrers',d.referrers);put('pages',d.pages);put('countryTable',d.countries);put('browsers',d.browsers);drawDaily(d.daily||[])}
-    refresh.onclick=()=>load().catch(e=>alert(e.message));load().catch(e=>alert(e.message));
-  </script>
+<main>
+  <h1>Traffic analytics</h1>
+  <p class="muted lede">
+    Privacy-conscious site activity. IP addresses are neither displayed nor retained, unique visitors are
+    estimated with a rotating daily hash, and no persistent visitor identifier is created.
+    See <a href="#methodology">how to read this data</a>.
+  </p>
+
+  <div class="toolbar">
+    <label class="field">From <input id="from" type="date"></label>
+    <label class="field">To <input id="to" type="date"></label>
+    <label class="field">Quick range
+      <select id="preset">
+        <option value="7">Last 7 days</option>
+        <option value="14">Last 14 days</option>
+        <option value="30">Last 30 days</option>
+        <option value="90">Last 90 days</option>
+        <option value="365">Last 365 days</option>
+      </select>
+    </label>
+    <button id="refresh">Refresh</button>
+    <button id="export" class="secondary">Download CSV</button>
+  </div>
+
+  <p id="status" class="status muted" role="status" aria-live="polite">Loading…</p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="label">Human page views</div>
+      <div class="value" id="humanViews">—</div>
+      <div class="delta" id="humanViewsDelta"></div>
+    </div>
+    <div class="card">
+      <div class="label">Estimated visitors</div>
+      <div class="value" id="visitors">—</div>
+      <div class="delta" id="visitorsDelta"></div>
+    </div>
+    <div class="card">
+      <div class="label">Countries</div>
+      <div class="value" id="countries">—</div>
+      <div class="delta" id="countriesDelta"></div>
+    </div>
+    <div class="card">
+      <div class="label">Bot share of views</div>
+      <div class="value" id="botShare">—</div>
+      <div class="delta" id="botDetail"></div>
+    </div>
+  </div>
+
+  <section class="panel full" style="margin-bottom:20px">
+    <h2 id="dailyHeading">Views per day</h2>
+    <p class="muted" id="dailySummary" style="font-size:.88rem"></p>
+    <div class="chart" id="dailyChart" role="img" aria-labelledby="dailyHeading" aria-describedby="dailySummary"></div>
+    <p class="legend">
+      <span><span class="swatch bar-human"></span>Human views</span>
+      <span><span class="swatch bar-bot"></span>Bot and crawler views</span>
+    </p>
+    <details>
+      <summary>View daily figures as a table</summary>
+      <div class="scroll">
+        <table id="dailyTable">
+          <caption>Page views per day, split between human and automated traffic.</caption>
+          <thead><tr><th>Day</th><th class="num">Human</th><th class="num">Bot</th><th class="num">Total</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
+  <div class="grid">
+    <section class="panel">
+      <h2>Referrer categories</h2>
+      <table id="referrers" data-sortable>
+        <caption>Where human visits came from, grouped by type of source.</caption>
+        <thead><tr><th>Category</th><th class="num">Views</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <details>
+        <summary>Referring domains in detail</summary>
+        <div class="scroll">
+          <table id="referrerHosts" data-sortable>
+            <caption>Individual referring domains.</caption>
+            <thead><tr><th>Domain</th><th class="num">Views</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+
+    <section class="panel">
+      <h2>Content categories</h2>
+      <table id="categories" data-sortable>
+        <caption>Human views grouped by the part of the site that was viewed.</caption>
+        <thead><tr><th>Category</th><th class="num">Views</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>Pages</h2>
+      <table id="pages" data-sortable>
+        <caption>Most viewed pages, human traffic only.</caption>
+        <thead><tr><th>Page</th><th class="num">Views</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>Countries</h2>
+      <table id="countryTable" data-sortable>
+        <caption>Country-level location only; city-level data is never derived or stored.</caption>
+        <thead><tr><th>Country</th><th class="num">Views</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>Top actions</h2>
+      <table id="actions" data-sortable>
+        <caption>Outbound link clicks and file downloads recorded in the browser.</caption>
+        <thead><tr><th>Type</th><th>Target</th><th class="num">Count</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>Navigation paths</h2>
+      <table id="paths" data-sortable>
+        <caption>Common same-site movements between pages.</caption>
+        <thead><tr><th>From</th><th>To</th><th class="num">Count</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>Exit pages</h2>
+      <table id="exits" data-sortable>
+        <caption>Pages where a visit ended without moving to another page.</caption>
+        <thead><tr><th>Page</th><th class="num">Exits</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>Devices</h2>
+      <table id="devices" data-sortable>
+        <caption>Device classification, including automated traffic.</caption>
+        <thead><tr><th>Type</th><th class="num">Views</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <h3>Return visits</h3>
+      <p id="returning" class="muted" style="font-size:.9rem">—</p>
+    </section>
+
+    <section class="panel">
+      <h2>Views by weekday</h2>
+      <table id="weekdays" data-sortable>
+        <caption>Human views by day of week, in UTC.</caption>
+        <thead><tr><th>Weekday</th><th class="num">Views</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>Views by hour</h2>
+      <table id="hours" data-sortable>
+        <caption>Human views by hour of day, in UTC.</caption>
+        <thead><tr><th>Hour (UTC)</th><th class="num">Views</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </div>
+
+  <section class="panel full" id="methodology" style="margin-top:20px">
+    <h2>How to read this data</h2>
+    <details>
+      <summary>What counts as a page view</summary>
+      <p class="muted">A page view is one successful HTML page load served through the site's edge worker. Reloads count
+        again; in-page anchor jumps and asset requests do not. Requests that do not return HTML are ignored.</p>
+    </details>
+    <details>
+      <summary>How visitors are estimated</summary>
+      <p class="muted">Each request is reduced to a one-way hash of a secret salt, the current UTC date and the requesting
+        IP address. The IP address itself is never written to storage. Because the date is part of the input, the hash
+        changes every day and cannot be used to follow anyone across days. The visitor count is therefore an
+        estimate of distinct visitors within a day, not an identity count, and it will overstate shared networks
+        and understate people using several networks.</p>
+    </details>
+    <details>
+      <summary>How bots are classified</summary>
+      <p class="muted">Traffic is labelled as a bot when the user-agent string matches known crawlers, preview fetchers
+        and headless browsers. Headline figures show human traffic only; bot volume is reported separately so
+        crawler activity is never mistaken for scholarly or public interest. Classification relies on
+        self-reported user-agents, so it is indicative rather than exact.</p>
+    </details>
+    <details>
+      <summary>How actions, paths and exits are measured</summary>
+      <p class="muted">A small first-party script records outbound link clicks, file downloads, same-site page-to-page
+        movements and visit endings. It sends only the event type, the current path, the previous path where
+        relevant, and an outbound domain or file path. It respects the browser's Do Not Track setting, and events
+        are accepted only when they originate from this site.</p>
+    </details>
+    <details>
+      <summary>How return visits are estimated</summary>
+      <p class="muted">Return visits use a single local browser flag that records only whether this browser has been here
+        before. The flag never leaves the browser; only the resulting yes/no value is sent with a visit event. No
+        reusable visitor identifier exists, so this figure counts returning visits rather than returning people,
+        and it resets whenever site data is cleared.</p>
+    </details>
+    <details>
+      <summary>Location precision and retention</summary>
+      <p class="muted">Location is recorded at country level only, as supplied by the edge network. No city, region,
+        coordinates, IP address or raw request log is stored. Only the aggregated event rows shown on this page are
+        retained, and comparison figures use the equivalent period immediately preceding the selected range.</p>
+    </details>
+    <details>
+      <summary>What is deliberately excluded</summary>
+      <p class="muted">There is no demographic or interest profiling, no cross-site tracking, no third-party analytics or
+        advertising code, no precise location, and no conventional bounce-rate modelling.</p>
+    </details>
+  </section>
+</main>
+
+<script>
+(function () {
+  var WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  var el = function (id) { return document.getElementById(id); };
+  var latest = null;
+
+  function escapeHtml(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  var number = function (value) { return (value || 0).toLocaleString(); };
+  var iso = function (date) { return date.toISOString().slice(0, 10); };
+
+  function setRange(days) {
+    el('to').value = iso(new Date());
+    el('from').value = iso(new Date(Date.now() - (days - 1) * 864e5));
+  }
+
+  function fill(id, rows, format) {
+    var body = document.querySelector('#' + id + ' tbody');
+    if (!rows || !rows.length) {
+      var columns = document.querySelectorAll('#' + id + ' thead th').length;
+      body.innerHTML = '<tr><td colspan="' + columns + '" class="muted">No data for this range.</td></tr>';
+      return;
+    }
+    body.innerHTML = rows.map(format).join('');
+  }
+
+  var labelRow = function (row) {
+    return '<tr><td>' + escapeHtml(row.label || 'Unknown') + '</td><td class="num">' + number(row.count) + '</td></tr>';
+  };
+
+  function delta(id, current, previous, suffix) {
+    var node = el(id);
+    if (!previous) {
+      node.innerHTML = '<span class="muted">No comparable prior period</span>';
+      return;
+    }
+    var change = Math.round(((current - previous) / previous) * 1000) / 10;
+    var direction = change > 0 ? 'up' : change < 0 ? 'down' : '';
+    var arrow = change > 0 ? '▲' : change < 0 ? '▼' : '■';
+    node.innerHTML = '<span class="' + direction + '">' + arrow + ' ' + Math.abs(change).toFixed(1) + '%</span>'
+      + ' vs. previous ' + escapeHtml(suffix) + ' (' + number(previous) + ')';
+  }
+
+  function daysBetween(fromStr, toStr) {
+    var out = [];
+    var day = new Date(fromStr + 'T00:00:00Z');
+    var end = new Date(toStr + 'T00:00:00Z');
+    while (day <= end && out.length < 400) {
+      out.push(day.toISOString().slice(0, 10));
+      day.setUTCDate(day.getUTCDate() + 1);
+    }
+    return out;
+  }
+
+  function drawDaily(rows) {
+    var map = {};
+    (rows || []).forEach(function (row) { map[row.day] = row; });
+    var series = daysBetween(el('from').value, el('to').value).map(function (day) {
+      var row = map[day] || {};
+      return { day: day, human: row.humanCount || 0, bot: row.botCount || 0 };
+    });
+    var max = Math.max(1, Math.max.apply(null, series.map(function (r) { return r.human + r.bot; })));
+
+    el('dailyChart').innerHTML = series.map(function (row) {
+      var total = row.human + row.bot;
+      var stack;
+      if (!total) {
+        stack = '<div class="bar-empty"></div>';
+      } else {
+        var botHeight = Math.round((row.bot / max) * 118);
+        var humanHeight = Math.round((row.human / max) * 118);
+        if (row.bot && botHeight < 2) botHeight = 2;
+        if (row.human && humanHeight < 2) humanHeight = 2;
+        stack = '<div class="bar-bot" style="height:' + botHeight + 'px"></div>'
+              + '<div class="bar-human" style="height:' + humanHeight + 'px"></div>';
+      }
+      return '<div class="bar-wrap" title="' + escapeHtml(row.day) + ': ' + row.human + ' human, ' + row.bot + ' bot">'
+        + '<div class="bar-stack">' + stack + '</div>'
+        + '<div class="bar-label">' + escapeHtml(row.day.slice(5)) + '</div></div>';
+    }).join('');
+
+    var busiest = series.slice().sort(function (a, b) { return b.human - a.human; })[0];
+    el('dailySummary').textContent = series.length + ' days shown. Busiest day for human traffic: '
+      + (busiest && busiest.human ? busiest.day + ' with ' + busiest.human + ' views.' : 'none recorded.');
+
+    fill('dailyTable', series.map(function (r) { return { day: r.day, human: r.human, bot: r.bot }; }), function (row) {
+      return '<tr><td>' + escapeHtml(row.day) + '</td><td class="num">' + number(row.human)
+        + '</td><td class="num">' + number(row.bot) + '</td><td class="num">' + number(row.human + row.bot) + '</td></tr>';
+    });
+  }
+
+  function render(data) {
+    latest = data;
+    var totals = data.totals, previous = data.previousTotals;
+    var lengthDays = daysBetween(data.range.from, data.range.to).length;
+    var suffix = lengthDays + ' day' + (lengthDays === 1 ? '' : 's');
+
+    el('humanViews').textContent = number(totals.humanViews);
+    el('visitors').textContent = number(totals.visitors);
+    el('countries').textContent = number(totals.countries);
+    var share = totals.views ? (totals.botViews / totals.views) * 100 : 0;
+    el('botShare').textContent = totals.views ? share.toFixed(1) + '%' : '—';
+    el('botDetail').textContent = number(totals.botViews) + ' bot of ' + number(totals.views) + ' total views';
+
+    delta('humanViewsDelta', totals.humanViews, previous.humanViews, suffix);
+    delta('visitorsDelta', totals.visitors, previous.visitors, suffix);
+    delta('countriesDelta', totals.countries, previous.countries, suffix);
+
+    drawDaily(data.daily);
+    fill('referrers', data.referrers, labelRow);
+    fill('referrerHosts', data.referrerHosts, labelRow);
+    fill('categories', data.categories, labelRow);
+    fill('pages', data.pages, labelRow);
+    fill('countryTable', data.countries, labelRow);
+    fill('devices', data.devices, labelRow);
+    fill('exits', data.exits, labelRow);
+    fill('weekdays', (data.weekdays || []).map(function (r) {
+      return { label: WEEKDAYS[r.weekday] || String(r.weekday), count: r.count };
+    }), labelRow);
+    fill('hours', (data.hours || []).map(function (r) {
+      return { label: String(r.hour).padStart(2, '0') + ':00', count: r.count };
+    }), labelRow);
+
+    fill('actions', data.actions, function (row) {
+      var type = row.type === 'download' ? 'Download' : 'Outbound';
+      return '<tr><td>' + type + '</td><td>' + escapeHtml(row.label) + '</td><td class="num">'
+        + number(row.count) + '</td></tr>';
+    });
+    fill('paths', data.paths, function (row) {
+      return '<tr><td>' + escapeHtml(row.source) + '</td><td>' + escapeHtml(row.destination)
+        + '</td><td class="num">' + number(row.count) + '</td></tr>';
+    });
+
+    var visits = data.visits || { total: 0, returning: 0 };
+    el('returning').textContent = visits.total
+      ? number(visits.returning) + ' of ' + number(visits.total) + ' recorded visits came from a browser that had '
+        + 'been here before (' + ((visits.returning / visits.total) * 100).toFixed(1) + '%).'
+      : 'No visit events recorded for this range yet.';
+
+    el('status').dataset.kind = 'ok';
+    el('status').textContent = 'Showing ' + data.range.from + ' to ' + data.range.to
+      + ', compared with ' + data.comparisonRange.from + ' to ' + data.comparisonRange.to + '.';
+  }
+
+  function load() {
+    var query = new URLSearchParams({ from: el('from').value, to: el('to').value });
+    el('status').dataset.kind = 'ok';
+    el('status').textContent = 'Loading…';
+    return fetch('/analytics/api/summary?' + query)
+      .then(function (response) {
+        return response.json().then(function (data) {
+          if (!response.ok) throw new Error(data.error || 'Analytics request failed (' + response.status + ')');
+          return data;
+        });
+      })
+      .then(render)
+      .catch(function (error) {
+        el('status').dataset.kind = 'error';
+        el('status').textContent = error.message;
+      });
+  }
+
+  /* Sortable tables ------------------------------------------------------- */
+  document.querySelectorAll('table[data-sortable] thead th, #dailyTable thead th').forEach(function (th, index) {
+    var text = th.textContent;
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'sort';
+    button.innerHTML = escapeHtml(text) + '<span aria-hidden="true">↕</span>';
+    th.textContent = '';
+    th.appendChild(button);
+    th.setAttribute('aria-sort', 'none');
+    button.addEventListener('click', function () {
+      var table = th.closest('table');
+      var headers = Array.prototype.slice.call(table.querySelectorAll('thead th'));
+      var column = headers.indexOf(th);
+      var ascending = th.getAttribute('aria-sort') !== 'ascending';
+      headers.forEach(function (other) { other.setAttribute('aria-sort', 'none'); });
+      th.setAttribute('aria-sort', ascending ? 'ascending' : 'descending');
+      var body = table.querySelector('tbody');
+      var rows = Array.prototype.slice.call(body.querySelectorAll('tr'));
+      if (rows.length === 1 && rows[0].querySelector('td[colspan]')) return;
+      rows.sort(function (a, b) {
+        var x = a.children[column] ? a.children[column].textContent.trim() : '';
+        var y = b.children[column] ? b.children[column].textContent.trim() : '';
+        var nx = Number(x.replace(/[,%]/g, '')), ny = Number(y.replace(/[,%]/g, ''));
+        var result = (!isNaN(nx) && !isNaN(ny)) ? nx - ny : x.localeCompare(y);
+        return ascending ? result : -result;
+      });
+      rows.forEach(function (row) { body.appendChild(row); });
+    });
+  });
+
+  /* CSV export ------------------------------------------------------------ */
+  function csvCell(value) {
+    var text = String(value == null ? '' : value);
+    return /[",\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
+  }
+
+  function exportCsv() {
+    if (!latest) return;
+    var lines = [['section', 'label', 'secondary', 'value'].join(',')];
+    var push = function (section, label, secondary, value) {
+      lines.push([section, label, secondary, value].map(csvCell).join(','));
+    };
+    var t = latest.totals, p = latest.previousTotals;
+    push('range', 'from', '', latest.range.from);
+    push('range', 'to', '', latest.range.to);
+    push('range', 'comparison from', '', latest.comparisonRange.from);
+    push('range', 'comparison to', '', latest.comparisonRange.to);
+    ['views', 'humanViews', 'botViews', 'visitors', 'countries'].forEach(function (key) {
+      push('totals', key, '', t[key]);
+      push('previous totals', key, '', p[key]);
+    });
+    push('visits', 'total', '', latest.visits.total);
+    push('visits', 'returning', '', latest.visits.returning);
+    (latest.daily || []).forEach(function (r) {
+      push('daily', r.day, 'human', r.humanCount);
+      push('daily', r.day, 'bot', r.botCount);
+    });
+    [['referrer categories', 'referrers'], ['referring domains', 'referrerHosts'],
+     ['content categories', 'categories'], ['pages', 'pages'], ['countries', 'countries'],
+     ['devices', 'devices'], ['exit pages', 'exits']].forEach(function (pair) {
+      (latest[pair[1]] || []).forEach(function (r) { push(pair[0], r.label, '', r.count); });
+    });
+    (latest.actions || []).forEach(function (r) { push('actions', r.label, r.type, r.count); });
+    (latest.paths || []).forEach(function (r) { push('navigation paths', r.source, r.destination, r.count); });
+    (latest.weekdays || []).forEach(function (r) { push('weekday', WEEKDAYS[r.weekday] || r.weekday, '', r.count); });
+    (latest.hours || []).forEach(function (r) { push('hour utc', String(r.hour).padStart(2, '0') + ':00', '', r.count); });
+
+    var blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'analytics-' + latest.range.from + '-to-' + latest.range.to + '.csv';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(function () { URL.revokeObjectURL(link.href); }, 1000);
+  }
+
+  el('preset').addEventListener('change', function () { setRange(Number(this.value)); load(); });
+  el('refresh').addEventListener('click', load);
+  el('export').addEventListener('click', exportCsv);
+  [el('from'), el('to')].forEach(function (input) {
+    input.addEventListener('change', load);
+  });
+
+  setRange(7);
+  load();
+})();
+</script>
 </body>
 </html>
