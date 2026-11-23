@@ -371,7 +371,7 @@ h1 {
 
 <body>
 <header>
-  <h1>Weather Underground Personal Weather Stations</h1>
+  <h1>Weather Stations and Local Forecast</h1>
   <p class="intro">
     Readings are shown in both Imperial and Metric when the conversion makes sense. This dashboard is meant to help connect familiar U.S. weather readings with Celsius, millimeters, kilometers per hour, meters per second, and hectopascals.
   </p>
@@ -490,11 +490,11 @@ h1 {
         <tr><td>Wind Speed</td><td id="wind3Imp">--</td><td id="wind3Met">--</td></tr>
         <tr><td>Wind Gust</td><td id="gust3Imp">--</td><td id="gust3Met">--</td></tr>
         <tr><td>Wind Direction</td><td id="windDir3Imp">--</td><td id="windDir3Met">--</td></tr>
-        <tr><td>Rain Rate / Now</td><td id="rainRate3Imp">--</td><td id="rainRate3Met">--</td></tr>
-        <tr><td>Rain Today</td><td id="rainToday3Imp">--</td><td id="rainToday3Met">--</td></tr>
+        <tr><td>Recent Precipitation</td><td id="rainRate3Imp">--</td><td id="rainRate3Met">--</td></tr>
+        <tr><td>Daily Rain (forecast)</td><td id="rainToday3Imp">--</td><td id="rainToday3Met">--</td></tr>
         <tr><td>Pressure</td><td id="press3Imp">--</td><td id="press3Met">--</td></tr>
         <tr><td>Solar Radiation</td><td id="solar3Imp">--</td><td id="solar3Met">--</td></tr>
-        <tr><td>UV</td><td id="uv3Imp">--</td><td id="uv3Met">--</td></tr>
+        <tr><td>UV Max (forecast)</td><td id="uv3Imp">--</td><td id="uv3Met">--</td></tr>
         <tr><td>Last Report</td><td id="time3Imp">--</td><td id="time3Met">--</td></tr>
       </tbody>
     </table>
@@ -648,7 +648,7 @@ function firstValue() {
 function numberOrNull(value) {
   if (!hasValue(value)) return null;
   const n = Number(value);
-  return Number.isNaN(n) ? null : n;
+  return Number.isFinite(n) ? n : null;
 }
 
 function round(value, decimals) {
@@ -781,7 +781,7 @@ function parseObservationTime(obs) {
     if (!Number.isNaN(date.getTime())) return date;
   }
 
-  const timeText = firstValue(obs.obsTimeLocal, obs.obsTimeUtc, obs.time, obs.date);
+  const timeText = firstValue(obs.obsTimeUtc, obs.time, obs.date, obs.obsTimeLocal);
 
   if (hasValue(timeText)) {
     const date = new Date(timeText);
@@ -899,6 +899,9 @@ function ageHealth(date, externalSource) {
   }
 
   const ageMinutes = (Date.now() - date.getTime()) / 60000;
+  if (ageMinutes < -5) {
+    return { text: 'Source status: observation time is in the future', statusClass: 'warn' };
+  }
 
   if (externalSource) {
     if (ageMinutes <= 90) {
@@ -994,7 +997,11 @@ function displayNormalizedStation(station, normalized) {
   const dewpt = displayTemperature(normalized.dewpointF, normalized.dewpointC, 1);
   const wind = displaySpeed(normalized.windMph, normalized.windKph, 1);
   const gust = displaySpeed(normalized.gustMph, normalized.gustKph, 1);
-  const rainRate = displayRain(normalized.rainRateIn, normalized.rainRateMm, ' in/hr', ' mm/hr', 2);
+  const rainRate = displayRain(
+    normalized.rainRateIn, normalized.rainRateMm,
+    normalized.rainRateIsInterval ? ' in / interval' : ' in/hr',
+    normalized.rainRateIsInterval ? ' mm / interval' : ' mm/hr', 2
+  );
   const rainTotal = displayRain(normalized.rainTodayIn, normalized.rainTodayMm, ' in', ' mm', 2);
   const pressure = displayPressure(normalized.pressureInHg, normalized.pressureHpa);
 
@@ -1034,16 +1041,22 @@ function displayNormalizedStation(station, normalized) {
 
   setText(
     ids.summary,
-    summarySentence(temp.c, normalized.humidity, dewpt.c, wind.kph, rainTotal.mm)
+    summarySentence(temp.c, normalized.humidity, dewpt.c, wind.kph,
+      normalized.dailyRainIsForecast ? null : rainTotal.mm)
   );
 
   setText(
     ids.note,
-    comfortNote(temp.c, normalized.humidity, dewpt.c, rainTotal.mm)
+    comfortNote(temp.c, normalized.humidity, dewpt.c,
+      normalized.dailyRainIsForecast ? null : rainTotal.mm)
   );
 
   const health = ageHealth(normalized.reportTime, normalized.externalSource);
-  setHealth(ids.health, health.text, health.statusClass);
+  const qualityNote = normalized.qcStatus === -1 ? ' · quality check not performed'
+    : normalized.qcStatus === 0 ? ' · quality check failed' : '';
+  const retainedNote = normalized.retained ? ' · previous reading retained after fetch failure' : '';
+  setHealth(ids.health, health.text + qualityNote + retainedNote,
+    normalized.qcStatus === 0 ? 'bad' : normalized.retained && health.statusClass === 'ok' ? 'warn' : health.statusClass);
 
   return true;
 }
@@ -1055,13 +1068,19 @@ function normalizePwsObservation(obs) {
   const metric = obs.metric || {};
 
   const reportTime = parseObservationTime(obs);
+  const tempF = numberOrNull(firstValue(imperial.temp, obs.tempf, obs.tempF, obs.temperatureF));
+  const heatIndex = numberOrNull(firstValue(imperial.heatIndex, obs.heatIndexf));
+  const windChill = numberOrNull(firstValue(imperial.windChill, obs.windchillf));
+  const feelsF = tempF !== null && tempF >= 80 ? firstValue(heatIndex, tempF)
+    : tempF !== null && tempF <= 50 ? firstValue(windChill, tempF)
+    : tempF;
 
   return {
-    tempF: firstValue(imperial.temp, obs.tempf, obs.tempF, obs.temperatureF),
+    tempF,
     tempC: firstValue(metric.temp, obs.tempc, obs.tempC, obs.temperatureC),
 
-    feelsF: firstValue(imperial.heatIndex, imperial.windChill, imperial.feelsLike, obs.heatIndexf, obs.windchillf, obs.feelsLikeF),
-    feelsC: firstValue(metric.heatIndex, metric.windChill, metric.feelsLike, obs.heatIndexc, obs.windchillc, obs.feelsLikeC),
+    feelsF,
+    feelsC: null,
 
     dewpointF: firstValue(imperial.dewpt, obs.dewptf, obs.dewPointF),
     dewpointC: firstValue(metric.dewpt, obs.dewptc, obs.dewPointC),
@@ -1090,6 +1109,7 @@ function normalizePwsObservation(obs) {
 
     reportTime,
     timeZone: 'America/New_York',
+    qcStatus: obs.qcStatus,
     externalSource: false
   };
 }
@@ -1141,7 +1161,8 @@ async function fetchOpenMeteo(station) {
     timezone: station.timezone,
     wind_speed_unit: 'kmh',
     temperature_unit: 'celsius',
-    precipitation_unit: 'mm'
+    precipitation_unit: 'mm',
+    timeformat: 'unixtime'
   });
 
   const url = 'https://api.open-meteo.com/v1/forecast?' + params.toString();
@@ -1155,7 +1176,10 @@ async function fetchOpenMeteo(station) {
   const current = data.current || {};
   const daily = data.daily || {};
 
-  const reportTime = current.time ? new Date(current.time) : new Date();
+  if (!data.current || !Number.isFinite(Number(current.time))) {
+    throw new Error('Open-Meteo returned no valid current observation time');
+  }
+  const reportTime = new Date(Number(current.time) * 1000);
 
   return {
     tempC: current.temperature_2m,
@@ -1168,7 +1192,9 @@ async function fetchOpenMeteo(station) {
     windDirection: current.wind_direction_10m,
 
     rainRateMm: current.precipitation,
+    rainRateIsInterval: true,
     rainTodayMm: Array.isArray(daily.precipitation_sum) ? daily.precipitation_sum[0] : null,
+    dailyRainIsForecast: true,
 
     pressureHpa: current.pressure_msl,
     solarRadiation: current.shortwave_radiation,
@@ -1203,13 +1229,15 @@ function updateTopStatus(successful, total, sourceText) {
   );
 }
 
+let initialLoad = true;
 async function loadWeather() {
-  setText('topStatus', 'Loading weather data...');
-  setText('statusMsg', 'Loading weather data...');
-
-  STATIONS.forEach(function(station) {
-    clearStation(station, 'loading');
-  });
+  if (initialLoad) {
+    setText('topStatus', 'Loading weather data...');
+    STATIONS.forEach(function(station) {
+      clearStation(station, 'loading');
+    });
+    initialLoad = false;
+  }
 
   let successful = 0;
   let sourceMessages = [];
@@ -1223,20 +1251,29 @@ async function loadWeather() {
     }).forEach(function(station) {
       const rawObs = getObservationForStation(data, station.stationId);
       const normalized = normalizePwsObservation(rawObs);
+      if (normalized) normalized.retained = Array.isArray(data.failedStations) &&
+        data.failedStations.includes(station.stationId);
 
       if (displayNormalizedStation(station, normalized)) {
         successful++;
       }
     });
 
-    sourceMessages.push('Personal stations loaded from ' + pwsResult.path + '.' + formatUpdatedAt(data));
+    const failures = Array.isArray(data.failedStations) ? data.failedStations : [];
+    sourceMessages.push('Personal stations loaded from ' + pwsResult.path + '.' +
+      formatUpdatedAt(data) + (failures.length ?
+        ' Previous readings retained for: ' + failures.join(', ') + '.' : ''));
   } catch (error) {
     console.error(error);
 
     STATIONS.filter(function(station) {
       return station.type === 'pws';
     }).forEach(function(station) {
-      clearStation(station, 'unavailable');
+      if (el(station.ids.timeImp)?.textContent === '--') {
+        clearStation(station, 'unavailable');
+      } else {
+        setHealth(station.ids.health, 'Refresh failed · showing previously loaded reading', 'warn');
+      }
     });
 
     sourceMessages.push('Personal station JSON could not be loaded.');
@@ -1255,13 +1292,16 @@ async function loadWeather() {
       sourceMessages.push('Yadang/Paju neighborhood weather loaded from Open-Meteo.');
     } catch (error) {
       console.error(error);
-      clearStation(station, 'unavailable');
+      if (el(station.ids.timeImp)?.textContent === '--') {
+        clearStation(station, 'unavailable');
+      } else {
+        setHealth(station.ids.health, 'Refresh failed · showing previously loaded reading', 'warn');
+      }
       sourceMessages.push('Yadang/Paju public weather could not be loaded.');
     }
   }
 
   updateTopStatus(successful, STATIONS.length, sourceMessages.join(' '));
-  setText('statusMsg', successful + ' of ' + STATIONS.length + ' locations loaded. ' + sourceMessages.join(' '));
 }
 
 loadWeather();
