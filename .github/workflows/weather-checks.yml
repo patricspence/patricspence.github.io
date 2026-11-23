@@ -1,0 +1,23 @@
+name: Check weather dashboard
+on:
+  pull_request:
+    paths:
+      - 'weather/**'
+      - 'scripts/update-weather.js'
+      - 'scripts/check-weather.js'
+      - '.github/workflows/weather-checks.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-weather:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Check JavaScript and dashboard structure
+        run: node scripts/check-weather.js
