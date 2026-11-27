@@ -1,47 +1,47 @@
 {
-  "updatedAt": "2026-11-26T20:29:43.022Z",
+  "updatedAt": "2026-11-27T03:13:18.338Z",
   "failedStations": [],
   "observations": {
     "KFLOVIED224": {
       "stationID": "KFLOVIED224",
-      "obsTimeUtc": "2026-11-26T20:29:32Z",
-      "epoch": 1795724972,
-      "humidity": 68,
-      "winddir": 180,
-      "solarRadiation": 61.6,
+      "obsTimeUtc": "2026-11-27T03:12:32Z",
+      "epoch": 1795749152,
+      "humidity": 95,
+      "winddir": 315,
+      "solarRadiation": 0,
       "uv": 0,
       "qcStatus": 1,
       "imperial": {
-        "temp": 68,
-        "heatIndex": 68,
-        "windChill": 68,
-        "dewpt": 57,
-        "windSpeed": 7,
-        "windGust": 8,
-        "pressure": 29.94,
+        "temp": 56,
+        "heatIndex": 56,
+        "windChill": 56,
+        "dewpt": 55,
+        "windSpeed": 0,
+        "windGust": 0,
+        "pressure": 30.07,
         "precipRate": 0,
         "precipTotal": 0
       }
     },
     "KMIMOUNT110": {
       "stationID": "KMIMOUNT110",
-      "obsTimeUtc": "2026-11-26T20:29:16Z",
-      "epoch": 1795724956,
-      "humidity": 68,
-      "winddir": 135,
-      "solarRadiation": 32.4,
-      "uv": 1,
+      "obsTimeUtc": "2026-11-27T03:13:15Z",
+      "epoch": 1795749195,
+      "humidity": 84,
+      "winddir": 158,
+      "solarRadiation": 0,
+      "uv": 0,
       "qcStatus": -1,
       "imperial": {
-        "temp": 45,
-        "heatIndex": 45,
-        "windChill": 43,
+        "temp": 39,
+        "heatIndex": 39,
+        "windChill": 37,
         "dewpt": 35,
         "windSpeed": 3,
         "windGust": 5,
-        "pressure": 29.75,
-        "precipRate": 0,
-        "precipTotal": 0
+        "pressure": 29.47,
+        "precipRate": 0.07,
+        "precipTotal": 0.09
       }
     }
   }
